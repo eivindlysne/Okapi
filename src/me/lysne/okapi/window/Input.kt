@@ -1,6 +1,7 @@
 package me.lysne.okapi.window
 
 
+import me.lysne.okapi.Config
 import org.joml.Vector2f
 import org.lwjgl.glfw.GLFW.*
 import java.util.HashMap
@@ -38,8 +39,8 @@ public class Input(private val window: Window) {
             Mouse.MIDDLE to false
     )
 
-    private val centerx = 960 / 2
-    private val centery = 540 / 2
+    private val centerx = Config.WindowWidth / 2
+    private val centery = Config.WindowHeight / 2
 
     public var mousedx: Int = 0
         private set

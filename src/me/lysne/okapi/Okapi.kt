@@ -4,16 +4,12 @@ import me.lysne.okapi.graphics.*
 import me.lysne.okapi.window.Input
 import me.lysne.okapi.window.Window
 import me.lysne.okapi.window.getTime
+import me.lysne.okapi.world.REGION_SIZE_X
+import me.lysne.okapi.world.REGION_SIZE_Z
 import me.lysne.okapi.world.World
-import org.joml.Matrix4f
-import org.joml.Quaternionf
 import org.joml.Vector2f
 import org.joml.Vector3f
-import org.lwjgl.Sys
-import org.lwjgl.stb.STBPerlin
 import java.io.File
-
-
 
 
 public class Okapi {
@@ -45,7 +41,7 @@ public class Okapi {
 
 
     init  {
-        window = Window(Config.WIDTH, Config.HEIGHT, Config.TITLE)
+        window = Window(Config.WindowWidth, Config.WindowHeight, Config.WindowTitle)
         input = Input(window)
         camera = Camera(Camera.ProjectionType.PERSPECTIVE, Vector3f(0f, 0f, 0f))
 
@@ -61,13 +57,13 @@ public class Okapi {
         textShader.registerUniforms(arrayOf("viewProjection", "font"))
         textShader.setUniform("font", 0)
         fontTexture = Texture("fonts/font.png", Texture.Filter.LINEAR, Texture.WrapMode.CLAMP_TO_EDGE)
-        fpsText = Text(Vector2f(10f, 10f), Vector3f(0f, 1f, 0f), "FPS:  0 ")
+        fpsText = Text("FPS:  0 ", Vector2f(10f, 10f))
 
         whiteTexture = Texture("textures/white.png", Texture.Filter.NEAREST, Texture.WrapMode.CLAMP_TO_EDGE)
         rockTexture = Texture("textures/crack.png", Texture.Filter.LINEAR, Texture.WrapMode.CLAMP_TO_EDGE)
         mossTexture = Texture("textures/moss.png", Texture.Filter.LINEAR, Texture.WrapMode.CLAMP_TO_EDGE)
 
-        if (Config.DEBUG) {
+        if (Config.DebugRender) {
             debugShader = Shader("debug_vert.glsl", "debug_frag.glsl")
             debugShader?.registerUniforms(arrayOf(
                     "viewProjection",
@@ -97,27 +93,26 @@ public class Okapi {
 
             if (frameCounter >= 1.0) {
 
-                if (Config.DEBUG)
+                if (Config.Debug)
                     fpsText.setNew("FPS: $frames")
-//                    println(frames)
 
                 frames = 0
                 frameCounter = 0.0
             }
 
-            while (unprocessedTime > Config.FRAME_TIME) {
+            while (unprocessedTime > Config.FrameTime) {
 
                 window.poll()
 
-                update(Config.FRAME_TIME)
+                update(Config.FrameTime)
 
                 render = true
 
-                unprocessedTime -= Config.FRAME_TIME
+                unprocessedTime -= Config.FrameTime
             }
 
             if (render) {
-                render(unprocessedTime / Config.FRAME_TIME)
+                render(unprocessedTime / Config.FrameTime)
                 frames++
             } // Else sleep?
         }
@@ -127,37 +122,10 @@ public class Okapi {
 
     private fun update(delta: Double) {
 
-        // TODO: Input handling should be somewhere else
-        camera.offsetOrientation(
-                -input.mousedx * 0.2,
-                -input.mousedy * 0.2)
-
-        input.centerCursor()
-
-        val velocity = 0.2f
-        val direction = Vector3f(0f, 0f, 0f)
-
-        if (input.keyDown(Input.Key.FORWARD))  direction.z -= 1f
-        if (input.keyDown(Input.Key.BACKWARD)) direction.z += 1f
-        if (input.keyDown(Input.Key.LEFT))     direction.x -= 1f
-        if (input.keyDown(Input.Key.RIGHT))    direction.x += 1f
-        if (direction.length() > 0) direction.normalize()
-
-        direction.rotate(camera.transform.orientation)
-        if (!Config.FLYING) direction.y = 0.0f
-        direction.mul(velocity)
-        camera.transform.position.add(direction)
-
-        // TODO: Working bounce
-//        if (direction.x != 0f || direction.y != 0f) {
-//            val f = 0.6 * Math.sin(4 * getTime())
-//            camera.transform.position.y = f.toFloat()
-//        }
-
-        camera.update()
+        camera.update(input)
         skybox.update(camera)
 
-        world.update()
+        world.update(camera)
     }
 
     private fun render(alpha: Double) {
@@ -172,12 +140,10 @@ public class Okapi {
         mossTexture.bind(0)
         mossTexture.bind(1)
 
-//        floorMesh.draw()
-
         // Draw World
         world.draw(basicShader)
 
-        if (Config.DEBUG)
+        if (Config.DebugRender)
             renderDebug()
 
         // Draw Ortho (Text and UI)
@@ -185,6 +151,7 @@ public class Okapi {
         textShader.setUniform("viewProjection", camera.orthoMatrix)
         fontTexture.bind(0)
         fpsText.draw()
+        world.drawText()
 
 
         window.swap()
@@ -212,7 +179,7 @@ public class Okapi {
 
         fpsText.destroy()
 
-        if (Config.DEBUG) {
+        if (Config.DebugRender) {
             debugShader?.destroy()
         }
     }

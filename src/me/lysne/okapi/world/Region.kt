@@ -4,10 +4,14 @@ import me.lysne.okapi.Config
 import me.lysne.okapi.graphics.*
 import org.joml.Vector3f
 
-private val REGION_SIZE_X: Int = 32
-private val REGION_SIZE_Z: Int = 32
+val REGION_SIZE_X: Int = 16
+val REGION_SIZE_Z: Int = 16
 
 public class Region(val worldX: Int, val worldZ: Int, val world: World) {
+
+    enum class Type {
+
+    }
 
     private val mesh: Mesh
     private val transform: Transform
@@ -18,20 +22,17 @@ public class Region(val worldX: Int, val worldZ: Int, val world: World) {
 
         transform = Transform()
         transform.position.set(
-                -(worldX * REGION_SIZE_X.toFloat()) - REGION_SIZE_X / 2,
+                (worldX * REGION_SIZE_X.toFloat()) - REGION_SIZE_X / 2,
                 0f,
-                -(worldZ * REGION_SIZE_Z.toFloat()) - REGION_SIZE_Z / 2)
+                (worldZ * REGION_SIZE_Z.toFloat()) - REGION_SIZE_Z / 2)
 
-        val rgb = Vector3f(
-                Math.random().toFloat(),
-                Math.random().toFloat(),
-                Math.random().toFloat())
+        val rgb = Vector3f(1f, 1f, 1f)
 
         // NOTE: Might not need to delay after all
         val data = createRegionMeshData(REGION_SIZE_X, REGION_SIZE_Z, -1f, rgb, transform)
         mesh = Mesh(data.vertices, data.indices)
 
-        if (Config.DEBUG) {
+        if (Config.Debug) {
             debugMesh = DebugMesh(data.vertices, data.indices)
         }
     }

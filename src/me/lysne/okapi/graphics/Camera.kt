@@ -1,5 +1,7 @@
 package me.lysne.okapi.graphics
 
+import me.lysne.okapi.Config
+import me.lysne.okapi.window.Input
 import org.joml.Matrix4f
 import org.joml.Quaternionf
 import org.joml.Vector3f
@@ -72,7 +74,34 @@ public class Camera(
         yawRot.mul(pitchRot).mul(transform.orientation, transform.orientation)
     }
 
-    public fun update() {
+    public fun update(input: Input) {
+
+        offsetOrientation(
+                -input.mousedx * Config.MouseSensitivity,
+                -input.mousedy * Config.MouseSensitivity)
+
+        input.centerCursor()
+
+        val velocity = 0.2f
+        val direction = Vector3f(0f, 0f, 0f)
+
+        if (input.keyDown(Input.Key.FORWARD))  direction.z -= 1f
+        if (input.keyDown(Input.Key.BACKWARD)) direction.z += 1f
+        if (input.keyDown(Input.Key.LEFT))     direction.x -= 1f
+        if (input.keyDown(Input.Key.RIGHT))    direction.x += 1f
+        if (direction.length() > 0) direction.normalize()
+
+        direction.rotate(transform.orientation)
+        if (!Config.Flying) direction.y = 0.0f
+        direction.mul(velocity)
+        transform.position.add(direction)
+
+        // TODO: Working bounce
+        //        if (direction.x != 0f || direction.y != 0f) {
+        //            val f = 0.6 * Math.sin(4 * getTime())
+        //            camera.transform.position.y = f.toFloat()
+        //        }
+
 
         // Recalculate view
         viewMatrix.identity()

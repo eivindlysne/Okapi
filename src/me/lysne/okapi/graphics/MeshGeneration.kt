@@ -15,8 +15,8 @@ public fun createRegionMeshData(
         color: Vector3f = Vector3f(1f, 1f, 1f),
         transform: Transform) : MeshData {
 
-    val density = 0.2f
-    val magnitude = 4f
+    val density = 0.1f
+    val magnitude = 2f
     val t = Vector3f()
     transform.position.mul(density ,t)
 

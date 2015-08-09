@@ -13,9 +13,9 @@ import java.nio.ByteBuffer
 import java.nio.FloatBuffer
 import java.nio.ShortBuffer
 
-public class Text(val position: Vector2f,
-                  val color: Vector3f,
-                  string: String,
+public class Text(string: String,
+                  val position: Vector2f,
+                  val color: Vector3f = Vector3f(1f, 1f, 1f),
                   val charSize: Float = 32f) {
 
     private var drawCount = 0
@@ -127,7 +127,7 @@ public class Text(val position: Vector2f,
             // TODO: Cache uv's for alphabet?
             val uvX = (charCode % 16) / 16f
             val uvY = (charCode / 16) / 16f
-            val x = position.x + (i * (charSize / 2f))
+            val x = position.x + (i * (charSize / 2.5f))
 
             vertexBuffer.put(x).put(position.y).put(0f)
                     .put(uvX).put(1f - (uvY + step))
