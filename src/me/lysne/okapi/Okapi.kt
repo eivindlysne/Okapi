@@ -20,7 +20,6 @@ public class Okapi {
     private val camera: Camera
     private val skybox: Skybox
     private val world: World
-//    private val floorMesh: Mesh
 
     // Shaders
     private val basicShader: Shader
@@ -61,7 +60,7 @@ public class Okapi {
 
         whiteTexture = Texture("textures/white.png", Texture.Filter.NEAREST, Texture.WrapMode.CLAMP_TO_EDGE)
         rockTexture = Texture("textures/crack.png", Texture.Filter.LINEAR, Texture.WrapMode.CLAMP_TO_EDGE)
-        mossTexture = Texture("textures/moss.png", Texture.Filter.LINEAR, Texture.WrapMode.CLAMP_TO_EDGE)
+        mossTexture = Texture("textures/moss2.png", Texture.Filter.LINEAR, Texture.WrapMode.CLAMP_TO_EDGE)
 
         if (Config.DebugRender) {
             debugShader = Shader("debug_vert.glsl", "debug_frag.glsl")

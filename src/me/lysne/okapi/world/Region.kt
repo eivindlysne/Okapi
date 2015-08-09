@@ -9,12 +9,17 @@ val REGION_SIZE_Z: Int = 16
 
 public class Region(val worldX: Int, val worldZ: Int, val world: World) {
 
-    enum class Type {
-
+    // Need lots of other values for diversity
+    enum class Type(val color: Vector3f) {
+        Field(Vector3f(.2f, 1f, .3f)),
+        Desert(Vector3f(.76f, .74f, .5f)),
+        Rocky(Vector3f(.34f, .37f, .39f))
     }
 
     private val mesh: Mesh
     private val transform: Transform
+
+    val type: Type
 
     private var debugMesh: DebugMesh? = null
 
@@ -26,10 +31,10 @@ public class Region(val worldX: Int, val worldZ: Int, val world: World) {
                 0f,
                 (worldZ * REGION_SIZE_Z.toFloat()) - REGION_SIZE_Z / 2)
 
-        val rgb = Vector3f(1f, 1f, 1f)
+        type = Type.values()[world.r.nextInt(3)]
 
         // NOTE: Might not need to delay after all
-        val data = createRegionMeshData(REGION_SIZE_X, REGION_SIZE_Z, -1f, rgb, transform)
+        val data = createRegionMeshData(REGION_SIZE_X, REGION_SIZE_Z, -1f, type.color, transform)
         mesh = Mesh(data.vertices, data.indices)
 
         if (Config.Debug) {

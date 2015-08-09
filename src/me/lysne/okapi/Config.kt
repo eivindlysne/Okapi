@@ -2,6 +2,9 @@ package me.lysne.okapi
 
 public object Config {
 
+    val Seed = 0L
+    val Epsilon = 0.001f
+
     // Flags
     val Debug: Boolean = true
     val DebugRender: Boolean = false

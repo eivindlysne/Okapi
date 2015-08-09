@@ -16,13 +16,16 @@ uniform Transform transform;
 in vec3 position;
 in vec2 tex_coord;
 in vec3 color;
+in vec3 normals;
 
 out vec2 vTexCoord;
 out vec3 vColor;
+out vec3 vNormals;
 
 void main() {
     vTexCoord = tex_coord;
     vColor = color;
+    vNormals = normals;
 
     vec3 pos = position;
     pos = transform.position + quaternion_rotate(

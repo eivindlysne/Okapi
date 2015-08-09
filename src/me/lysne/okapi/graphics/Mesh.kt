@@ -9,10 +9,10 @@ import org.lwjgl.opengl.GL30
 public class Mesh(val vertices: Array<Vertex>, val indices: ShortArray) {
 
     private enum class Attributes(val loc: Int, val size: Int) {
-        POSITION(0, 3),
-        TEXCOORD(1, 2),
-        COLOR(2, 3),
-        NORMAL(3, 3),
+        Position(0, 3),
+        TexCoord(1, 2),
+        Color(2, 3),
+        Normals(3, 3),
         TANGENT(4, 3),
     }
 
@@ -32,10 +32,12 @@ public class Mesh(val vertices: Array<Vertex>, val indices: ShortArray) {
         val indexBuffer = BufferUtils.createShortBuffer(indices.size())
 
         // NOTE: Calling reverse here might be costly
+        // NOTE: Seems the need went away?
         vertices./*reverse().*/forEach {
             vertexBuffer.put(it.position.x).put(it.position.y).put(it.position.z)
             vertexBuffer.put(it.texCoord.x).put(it.texCoord.y)
             vertexBuffer.put(it.color.x).put(it.color.y).put(it.color.z)
+            vertexBuffer.put(it.normals.x).put(it.normals.y).put(it.normals.z)
         }
         indices./*reverse().*/forEach {  indexBuffer.put(it) }
         vertexBuffer.flip()
@@ -46,31 +48,41 @@ public class Mesh(val vertices: Array<Vertex>, val indices: ShortArray) {
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbo)
         GL15.glBufferData(GL15.GL_ARRAY_BUFFER, vertexBuffer, GL15.GL_STATIC_DRAW)
 
-        GL20.glEnableVertexAttribArray(Attributes.POSITION.loc)
-        GL20.glEnableVertexAttribArray(Attributes.TEXCOORD.loc)
-        GL20.glEnableVertexAttribArray(Attributes.COLOR.loc)
+        GL20.glEnableVertexAttribArray(Attributes.Position.loc)
+        GL20.glEnableVertexAttribArray(Attributes.TexCoord.loc)
+        GL20.glEnableVertexAttribArray(Attributes.Color.loc)
+        GL20.glEnableVertexAttribArray(Attributes.Normals.loc)
         GL20.glVertexAttribPointer(
-                Attributes.POSITION.loc,
-                Attributes.POSITION.size,
+                Attributes.Position.loc,
+                Attributes.Position.size,
                 GL11.GL_FLOAT,
                 false,
                 VERTEX_SIZE * FLOAT_SIZE,
                 0L)
         GL20.glVertexAttribPointer(
-                Attributes.TEXCOORD.loc,
-                Attributes.TEXCOORD.size,
+                Attributes.TexCoord.loc,
+                Attributes.TexCoord.size,
                 GL11.GL_FLOAT,
                 false,
                 VERTEX_SIZE * FLOAT_SIZE,
-                (Attributes.POSITION.size * FLOAT_SIZE).toLong())
+                (Attributes.Position.size * FLOAT_SIZE).toLong())
         GL20.glVertexAttribPointer(
-                Attributes.COLOR.loc,
-                Attributes.COLOR.size,
+                Attributes.Color.loc,
+                Attributes.Color.size,
                 GL11.GL_FLOAT,
                 false,
                 VERTEX_SIZE * FLOAT_SIZE,
-                ((Attributes.POSITION.size + Attributes.TEXCOORD.size)
-                  * FLOAT_SIZE).toLong())
+                ((Attributes.Position.size +
+                  Attributes.TexCoord.size) * FLOAT_SIZE).toLong())
+        GL20.glVertexAttribPointer(
+                Attributes.Normals.loc,
+                Attributes.Normals.size,
+                GL11.GL_FLOAT,
+                false,
+                VERTEX_SIZE * FLOAT_SIZE,
+                ((Attributes.Position.size +
+                  Attributes.TexCoord.size +
+                  Attributes.Color.size) * FLOAT_SIZE).toLong())
 
         GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, ibo)
         GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, indexBuffer, GL15.GL_STATIC_DRAW)

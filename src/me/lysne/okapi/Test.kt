@@ -22,7 +22,7 @@ public object Test {
                 "transform.orientation",
                 "transform.scale"))
         shader.setUniform("diffuse0", 0)
-        shader.setUniform("diffuse1", 1)
+//        shader.setUniform("diffuse1", 1)
         return shader
     }
 }

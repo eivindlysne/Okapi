@@ -12,6 +12,7 @@ public class World {
     private val regions: MutableMap<Pair<Int, Int>, Region>
     private val coordsText: Text
 
+    val r = Random()
     var currentRegion: Region
 
     init {
