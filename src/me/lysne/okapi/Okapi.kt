@@ -25,6 +25,7 @@ public class Okapi {
 
     // Textures
     private val whiteTexture: Texture
+    private val texTexture: Texture
     private val rockTexture: Texture
     private val mossTexture: Texture
     private val fontTexture: Texture
@@ -63,6 +64,7 @@ public class Okapi {
         fpsText = Text("FPS:  0 ", Vector2f(10f, 10f))
 
         whiteTexture = Texture("textures/white.png", Texture.Filter.NEAREST, Texture.WrapMode.CLAMP_TO_EDGE)
+        texTexture = Texture("textures/tex.png", Texture.Filter.NEAREST, Texture.WrapMode.REPEAT)
         rockTexture = Texture("textures/crack.png", Texture.Filter.LINEAR, Texture.WrapMode.CLAMP_TO_EDGE)
         mossTexture = Texture("textures/moss2.png", Texture.Filter.LINEAR, Texture.WrapMode.CLAMP_TO_EDGE)
 
@@ -141,7 +143,7 @@ public class Okapi {
         defaultShader.setUniform("viewProjection", camera.viewProjectionMatrix)
         defaultShader.setUniform("cameraPosition", camera.transform.position)
 
-        mossTexture.bind(0)
+        texTexture.bind(0)
 
         // Draw World
         world.draw(defaultShader)
@@ -176,6 +178,8 @@ public class Okapi {
         defaultShader.destroy()
         textShader.destroy()
 
+        whiteTexture.destroy()
+        texTexture.destroy()
         rockTexture.destroy()
         mossTexture.destroy()
         fontTexture.destroy()

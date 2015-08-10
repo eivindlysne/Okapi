@@ -13,7 +13,8 @@ public class Region(val worldX: Int, val worldZ: Int, val world: World) {
     enum class Type(val color: Vector3f) {
         Field(Vector3f(.2f, 1f, .3f)),
         Desert(Vector3f(.76f, .74f, .5f)),
-        Rocky(Vector3f(.34f, .37f, .39f))
+        Rocky(Vector3f(.34f, .37f, .39f)),
+        Water(Vector3f(0f, 0f, 1f))
     }
 
     private val mesh: Mesh
@@ -29,9 +30,9 @@ public class Region(val worldX: Int, val worldZ: Int, val world: World) {
         transform.position.set(
                 (worldX * REGION_SIZE_X.toFloat()) - REGION_SIZE_X / 2,
                 0f,
-                (worldZ * REGION_SIZE_Z.toFloat()) - REGION_SIZE_Z / 2)
+                (worldZ * REGION_SIZE_Z.toFloat()) + REGION_SIZE_Z / 2)
 
-        type = Type.values()[world.r.nextInt(3)]
+        type = Type.values()[world.r.nextInt(4)]
 
         // NOTE: Might not need to delay after all
         val data = createRegionMeshData(REGION_SIZE_X, REGION_SIZE_Z, -1f, type.color, transform)

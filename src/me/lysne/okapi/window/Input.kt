@@ -2,7 +2,6 @@ package me.lysne.okapi.window
 
 
 import me.lysne.okapi.Config
-import org.joml.Vector2f
 import org.lwjgl.glfw.GLFW.*
 import java.util.HashMap
 
@@ -14,8 +13,8 @@ public class Input(private val window: Window) {
         BACKWARD(GLFW_KEY_S),
         LEFT(GLFW_KEY_A),
         RIGHT(GLFW_KEY_D),
-        LOOK_LEFT(GLFW_KEY_Q),
-        LOOK_RIGHT(GLFW_KEY_E)
+        UP(GLFW_KEY_UP),
+        DOWN(GLFW_KEY_DOWN)
     }
 
     enum class Mouse(val code: Int) {
@@ -29,8 +28,8 @@ public class Input(private val window: Window) {
             Key.BACKWARD to false,
             Key.LEFT to false,
             Key.RIGHT to false,
-            Key.LOOK_LEFT to false,
-            Key.LOOK_RIGHT to false
+            Key.UP to false,
+            Key.DOWN to false
     )
 
     private val mice: HashMap<Mouse, Boolean> = hashMapOf(
@@ -64,8 +63,8 @@ public class Input(private val window: Window) {
                         Key.BACKWARD.code -> keys[Key.BACKWARD] = pressed
                         Key.LEFT.code -> keys[Key.LEFT] = pressed
                         Key.RIGHT.code -> keys[Key.RIGHT] = pressed
-                        Key.LOOK_LEFT.code -> keys[Key.LOOK_LEFT] = pressed
-                        Key.LOOK_RIGHT.code -> keys[Key.LOOK_RIGHT] = pressed
+                        Key.UP.code -> keys[Key.UP] = pressed
+                        Key.DOWN.code -> keys[Key.DOWN] = pressed
                     }
                 }
         }))

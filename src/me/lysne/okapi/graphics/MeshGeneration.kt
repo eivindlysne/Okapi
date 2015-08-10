@@ -49,7 +49,7 @@ public fun createRegionMeshData(
     for (i in 0..zUnits-1) {
         for (j in 0..xUnits-1) {
             val x1 = i.toFloat(); val x2 = x1 + 1f
-            val z1 = j.toFloat(); val z2 = z1 + 1f
+            val z1 = -j.toFloat(); val z2 = z1 - 1f
 
             val x1Mod = x1 * density + t.x
             val x2Mod = x2 * density + t.x
@@ -61,24 +61,6 @@ public fun createRegionMeshData(
             val y2 = STBPerlin.stb_perlin_noise3(x2Mod, yPlane, z1Mod, 0, 0, 0) * magnitude
             val y3 = STBPerlin.stb_perlin_noise3(x2Mod, yPlane, z2Mod, 0, 0, 0) * magnitude
             val y4 = STBPerlin.stb_perlin_noise3(x1Mod, yPlane, z2Mod, 0, 0, 0) * magnitude
-
-//            // Calculate normals
-//            val gradientV1 = Vector3f(
-//                    STBPerlin.stb_perlin_noise3(x1Mod + Config.Epsilon, yPlane, z1Mod, 0, 0, 0) * magnitude * .5f + .5f,
-//                    STBPerlin.stb_perlin_noise3(x1Mod, yPlane + Config.Epsilon, z1Mod, 0, 0, 0) * magnitude * .5f + .5f,
-//                    STBPerlin.stb_perlin_noise3(x1Mod, yPlane, z1Mod + Config.Epsilon, 0, 0, 0) * magnitude * .5f + .5f)
-//            val gradientV2 = Vector3f(
-//                    STBPerlin.stb_perlin_noise3(x2Mod + Config.Epsilon, yPlane, z1Mod, 0, 0, 0) * magnitude * .5f + .5f,
-//                    STBPerlin.stb_perlin_noise3(x2Mod, yPlane + Config.Epsilon, z1Mod, 0, 0, 0) * magnitude * .5f + .5f,
-//                    STBPerlin.stb_perlin_noise3(x2Mod, yPlane, z1Mod + Config.Epsilon, 0, 0, 0) * magnitude * .5f + .5f)
-//            val gradientV3 = Vector3f(
-//                    STBPerlin.stb_perlin_noise3(x2Mod + Config.Epsilon, yPlane, z2Mod, 0, 0, 0) * magnitude * .5f + .5f,
-//                    STBPerlin.stb_perlin_noise3(x2Mod, yPlane + Config.Epsilon, z2Mod, 0, 0, 0) * magnitude * .5f + .5f,
-//                    STBPerlin.stb_perlin_noise3(x2Mod, yPlane, z2Mod + Config.Epsilon, 0, 0, 0) * magnitude * .5f + .5f)
-//            val gradientV4 = Vector3f(
-//                    STBPerlin.stb_perlin_noise3(x1Mod + Config.Epsilon, yPlane, z2Mod, 0, 0, 0) * magnitude * .5f + .5f,
-//                    STBPerlin.stb_perlin_noise3(x1Mod, yPlane + Config.Epsilon, z2Mod, 0, 0, 0) * magnitude * .5f + .5f,
-//                    STBPerlin.stb_perlin_noise3(x1Mod, yPlane, z2Mod + Config.Epsilon, 0, 0, 0) * magnitude * .5f + .5f)
 
             // Creatte vertices
             vertices[vx] = Vertex(Vector3f(x1, yPlane - y1, z1), Vector2f(0f, 0f), color)

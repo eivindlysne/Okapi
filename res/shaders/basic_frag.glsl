@@ -62,7 +62,7 @@ void main() {
 
     // Rotate the normal vector according to transform.orientation.
     // Then inverte them due to facing?
-    vec3 normal = -normalize(quaternion_rotate(transform.orientation, vNormal));
+    vec3 normal = normalize(quaternion_rotate(transform.orientation, vNormal));
 
     vec3 surfaceToLight = normalize(pointLight.position - vWordSpacePosition);
 

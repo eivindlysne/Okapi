@@ -10,7 +10,7 @@ public class Vertex(
         var normal: Vector3f) {
 
     constructor(position: Vector3f, texCoord: Vector2f)
-    : this(position, texCoord, Vector3f(1f, 1f, 1f), Vector3f(0f, 1f, 0f))
+    : this(position, texCoord, Vector3f(1f, 1f, 1f), Vector3f(0f, 0f, 0f))
 
     constructor(position: Vector3f, texCoord: Vector2f, color: Vector3f)
     : this(position, texCoord, color, Vector3f(0f, 0f, 0f))

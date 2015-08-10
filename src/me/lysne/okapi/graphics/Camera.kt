@@ -96,6 +96,9 @@ public class Camera(
         direction.mul(velocity)
         transform.position.add(direction)
 
+        if (input.keyDown(Input.Key.UP)) transform.position.y += .2f
+        if (input.keyDown(Input.Key.DOWN)) transform.position.y -= .2f
+
         // TODO: Working bounce
         //        if (direction.x != 0f || direction.y != 0f) {
         //            val f = 0.6 * Math.sin(4 * getTime())

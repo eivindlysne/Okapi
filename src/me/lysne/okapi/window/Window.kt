@@ -4,7 +4,6 @@ import org.lwjgl.glfw.*
 import org.lwjgl.glfw.Callbacks.errorCallbackPrint
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.opengl.GL11
-import org.lwjgl.opengl.GL30
 import org.lwjgl.opengl.GL32
 import org.lwjgl.opengl.GLContext
 import org.lwjgl.system.MemoryUtil.NULL
@@ -58,14 +57,17 @@ public class Window(val width: Int, val height: Int, val title: String) {
         GL11.glClearColor(0f, 0f, 0f, 0f)
         GL11.glViewport(0, 0, width, height)
 
-        GL11.glEnable(GL11.GL_TEXTURE_2D); // Not needed?
-        GL11.glEnable(GL32.GL_TEXTURE_CUBE_MAP_SEAMLESS); // Dunno if doin' anything
+        GL11.glEnable(GL11.GL_TEXTURE_2D) // Not needed?
+        GL11.glEnable(GL32.GL_TEXTURE_CUBE_MAP_SEAMLESS) // Dunno if doin' anything
 
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
-        GL11.glDepthFunc(GL11.GL_LEQUAL);
+        GL11.glEnable(GL11.GL_DEPTH_TEST)
+        GL11.glDepthFunc(GL11.GL_LEQUAL)
 
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GL11.glEnable(GL11.GL_BLEND)
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA)
+
+        GL11.glEnable(GL11.GL_CULL_FACE)
+        GL11.glCullFace(GL11.GL_BACK)
     }
 
     public fun destroy() {
