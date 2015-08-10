@@ -7,9 +7,6 @@ import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL15
 import org.lwjgl.opengl.GL20
 import org.lwjgl.opengl.GL30
-import org.lwjgl.stb.STBEasyFont
-import org.lwjgl.system.MemoryUtil
-import java.nio.ByteBuffer
 import java.nio.FloatBuffer
 import java.nio.ShortBuffer
 
@@ -38,7 +35,7 @@ public class Text(string: String,
 
         textBuffer = StringBuilder(string)
 
-        vertexBuffer = BufferUtils.createFloatBuffer(string.length() * 4 * VERTEX_SIZE)
+        vertexBuffer = BufferUtils.createFloatBuffer(string.length() * 4 * TEXT_VERTEX_SIZE)
         indexBuffer = BufferUtils.createShortBuffer(string.length() * 6)
 
         generateVertexData(charSize)
@@ -56,21 +53,21 @@ public class Text(string: String,
                 3,
                 GL11.GL_FLOAT,
                 false,
-                VERTEX_SIZE * FLOAT_SIZE,
+                TEXT_VERTEX_SIZE * FLOAT_SIZE,
                 0L)
         GL20.glVertexAttribPointer(
                 1,
                 2,
                 GL11.GL_FLOAT,
                 false,
-                VERTEX_SIZE * FLOAT_SIZE,
+                TEXT_VERTEX_SIZE * FLOAT_SIZE,
                 (3 * FLOAT_SIZE).toLong())
         GL20.glVertexAttribPointer(
                 2,
                 3,
                 GL11.GL_FLOAT,
                 false,
-                VERTEX_SIZE * FLOAT_SIZE,
+                TEXT_VERTEX_SIZE * FLOAT_SIZE,
                 ((3 + 2) * FLOAT_SIZE).toLong())
 
         GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, ibo)
@@ -99,7 +96,7 @@ public class Text(string: String,
         indexBuffer.clear()
 
         drawCount = newString.length() * 6
-        vertexBuffer.limit(newString.length() * 4 * VERTEX_SIZE)
+        vertexBuffer.limit(newString.length() * 4 * TEXT_VERTEX_SIZE)
         indexBuffer.limit(drawCount)
 
         generateVertexData(charSize)

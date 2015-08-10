@@ -35,6 +35,7 @@ public class Region(val worldX: Int, val worldZ: Int, val world: World) {
 
         // NOTE: Might not need to delay after all
         val data = createRegionMeshData(REGION_SIZE_X, REGION_SIZE_Z, -1f, type.color, transform)
+        generateNormals(data)
         mesh = Mesh(data.vertices, data.indices)
 
         if (Config.Debug) {

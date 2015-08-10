@@ -1,11 +1,15 @@
 package me.lysne.okapi.world
 
 import me.lysne.okapi.graphics.Camera
+import me.lysne.okapi.graphics.PointLight
 import me.lysne.okapi.graphics.Shader
 import me.lysne.okapi.graphics.Text
+import me.lysne.okapi.window.getTime
 import org.joml.Vector2f
 import org.joml.Vector3f
-import java.util.*
+import org.joml.Vector4f
+import java.util.HashMap
+import java.util.Random
 
 public class World {
 
@@ -13,6 +17,10 @@ public class World {
     private val coordsText: Text
 
     val r = Random()
+
+    val ambientLight = Vector4f(1f, 1f, 0f, .2f)
+    val light: PointLight
+
     var currentRegion: Region
 
     init {
@@ -33,6 +41,7 @@ public class World {
         createNewRegion( 0,  1)
         createNewRegion( 1,  1)
 
+        light = PointLight(Vector3f(0f, 2f, 0f), Vector3f(10f, 10f, 10f))
         coordsText = Text("Coords: (0,0)      ", Vector2f(10f, 35f))
     }
 
@@ -71,12 +80,20 @@ public class World {
             currentRegion = newRegion
         }
 
+        light.position.x = 4.0f + 8.0f * Math.cos(getTime()).toFloat()
+        light.position.z = 4.0f + 8.0f * Math.sin(getTime()).toFloat()
+
+
         for (region in regions.values()) {
             region.update()
         }
     }
 
     public fun draw(shader: Shader) {
+
+        shader.setUniform("pointLight.position", light.position)
+        shader.setUniform("pointLight.intensity", light.intensity)
+
         for (region in regions.values()) {
             region.draw(shader)
         }

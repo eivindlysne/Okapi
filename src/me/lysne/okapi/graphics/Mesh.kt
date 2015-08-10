@@ -12,8 +12,8 @@ public class Mesh(val vertices: Array<Vertex>, val indices: ShortArray) {
         Position(0, 3),
         TexCoord(1, 2),
         Color(2, 3),
-        Normals(3, 3),
-        TANGENT(4, 3),
+        Normal(3, 3),
+        Tangent(4, 3),
     }
 
     val vao: Int
@@ -37,7 +37,7 @@ public class Mesh(val vertices: Array<Vertex>, val indices: ShortArray) {
             vertexBuffer.put(it.position.x).put(it.position.y).put(it.position.z)
             vertexBuffer.put(it.texCoord.x).put(it.texCoord.y)
             vertexBuffer.put(it.color.x).put(it.color.y).put(it.color.z)
-            vertexBuffer.put(it.normals.x).put(it.normals.y).put(it.normals.z)
+            vertexBuffer.put(it.normal.x).put(it.normal.y).put(it.normal.z)
         }
         indices./*reverse().*/forEach {  indexBuffer.put(it) }
         vertexBuffer.flip()
@@ -51,7 +51,7 @@ public class Mesh(val vertices: Array<Vertex>, val indices: ShortArray) {
         GL20.glEnableVertexAttribArray(Attributes.Position.loc)
         GL20.glEnableVertexAttribArray(Attributes.TexCoord.loc)
         GL20.glEnableVertexAttribArray(Attributes.Color.loc)
-        GL20.glEnableVertexAttribArray(Attributes.Normals.loc)
+        GL20.glEnableVertexAttribArray(Attributes.Normal.loc)
         GL20.glVertexAttribPointer(
                 Attributes.Position.loc,
                 Attributes.Position.size,
@@ -75,8 +75,8 @@ public class Mesh(val vertices: Array<Vertex>, val indices: ShortArray) {
                 ((Attributes.Position.size +
                   Attributes.TexCoord.size) * FLOAT_SIZE).toLong())
         GL20.glVertexAttribPointer(
-                Attributes.Normals.loc,
-                Attributes.Normals.size,
+                Attributes.Normal.loc,
+                Attributes.Normal.size,
                 GL11.GL_FLOAT,
                 false,
                 VERTEX_SIZE * FLOAT_SIZE,
@@ -97,7 +97,6 @@ public class Mesh(val vertices: Array<Vertex>, val indices: ShortArray) {
     }
 
     public fun draw() {
-
         GL30.glBindVertexArray(vao)
         GL11.glDrawElements(GL11.GL_TRIANGLES, drawCount, GL11.GL_UNSIGNED_SHORT, 0L)
         GL30.glBindVertexArray(0)

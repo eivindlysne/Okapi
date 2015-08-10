@@ -4,8 +4,6 @@ import me.lysne.okapi.graphics.*
 import me.lysne.okapi.window.Input
 import me.lysne.okapi.window.Window
 import me.lysne.okapi.window.getTime
-import me.lysne.okapi.world.REGION_SIZE_X
-import me.lysne.okapi.world.REGION_SIZE_Z
 import me.lysne.okapi.world.World
 import org.joml.Vector2f
 import org.joml.Vector3f
@@ -22,7 +20,7 @@ public class Okapi {
     private val world: World
 
     // Shaders
-    private val basicShader: Shader
+    private val defaultShader: Shader
     private val textShader: Shader
 
     // Textures
@@ -36,21 +34,25 @@ public class Okapi {
 
     // Debug stuff
     private var debugShader: Shader? = null
-//    private var debugMesh: DebugMesh? = null
-
 
     init  {
         window = Window(Config.WindowWidth, Config.WindowHeight, Config.WindowTitle)
         input = Input(window)
         camera = Camera(Camera.ProjectionType.PERSPECTIVE, Vector3f(0f, 0f, 0f))
 
-        skybox = Skybox("neg_z.png", "pos_z.png",
-                        "pos_y.png", "neg_y.png",
-                        "neg_x.png", "pos_x.png")
+        skybox = Skybox("m_negz.png", "m_posz.png",
+                        "m_posy.png", "m_negy.png",
+                        "m_negx.png", "m_posx.png")
 
         world = World()
 
-        basicShader = Test.getBasicShader()
+        defaultShader = Shader("basic_vert.glsl", "basic_frag.glsl")
+        defaultShader.registerUniforms(arrayOf(
+                "diffuse0", "diffuse1",
+                "viewProjection",
+                "transform.position", "transform.orientation", "transform.scale",
+                "pointLight.position", "pointLight.intensity"))
+        defaultShader.setUniform("diffuse0", 0)
 
         textShader = Shader("text_vert.glsl", "text_frag.glsl")
         textShader.registerUniforms(arrayOf("viewProjection", "font"))
@@ -132,15 +134,15 @@ public class Okapi {
 
         skybox.draw(camera.viewProjectionMatrix)
 
-        basicShader.use()
+        defaultShader.use()
 
-        basicShader.setUniform("viewProjection", camera.viewProjectionMatrix)
+        defaultShader.setUniform("viewProjection", camera.viewProjectionMatrix)
 
         mossTexture.bind(0)
         mossTexture.bind(1)
 
         // Draw World
-        world.draw(basicShader)
+        world.draw(defaultShader)
 
         if (Config.DebugRender)
             renderDebug()
@@ -169,7 +171,7 @@ public class Okapi {
         window.destroy()
         world.destroy()
 
-        basicShader.destroy()
+        defaultShader.destroy()
         textShader.destroy()
 
         rockTexture.destroy()
