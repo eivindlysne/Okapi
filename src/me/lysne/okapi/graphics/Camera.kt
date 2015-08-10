@@ -96,8 +96,8 @@ public class Camera(
         direction.mul(velocity)
         transform.position.add(direction)
 
-        if (input.keyDown(Input.Key.UP)) transform.position.y += .2f
-        if (input.keyDown(Input.Key.DOWN)) transform.position.y -= .2f
+//        if (input.keyDown(Input.Key.UP)) transform.scale.add(1f, 1f, 1f)
+//        if (input.keyDown(Input.Key.DOWN)) transform.scale.sub(1f, 1f, 1f)
 
         // TODO: Working bounce
         //        if (direction.x != 0f || direction.y != 0f) {

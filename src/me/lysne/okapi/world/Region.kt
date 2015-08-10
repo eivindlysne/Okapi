@@ -2,19 +2,20 @@ package me.lysne.okapi.world
 
 import me.lysne.okapi.Config
 import me.lysne.okapi.graphics.*
+import org.joml.Vector2f
 import org.joml.Vector3f
 
-val REGION_SIZE_X: Int = 16
-val REGION_SIZE_Z: Int = 16
+val REGION_SIZE_X: Int = 32
+val REGION_SIZE_Z: Int = 32
 
 public class Region(val worldX: Int, val worldZ: Int, val world: World) {
 
     // Need lots of other values for diversity
-    enum class Type(val color: Vector3f) {
-        Field(Vector3f(.2f, 1f, .3f)),
-        Desert(Vector3f(.76f, .74f, .5f)),
-        Rocky(Vector3f(.34f, .37f, .39f)),
-        Water(Vector3f(0f, 0f, 1f))
+    enum class Type(val color: Vector3f, val tileCoord: Vector2f) {
+        Field(Vector3f(1f, 1f, 1f), Vector2f(0f, 2f)),
+        Desert(Vector3f(1f, 1f, 1f), Vector2f(0f, 1f)),
+        Rocky(Vector3f(1f, 1f, 1f), Vector2f(0f, 0f)),
+//        Water(Vector3f(.117f, .564f, 1f))
     }
 
     private val mesh: Mesh
@@ -32,10 +33,10 @@ public class Region(val worldX: Int, val worldZ: Int, val world: World) {
                 0f,
                 (worldZ * REGION_SIZE_Z.toFloat()) + REGION_SIZE_Z / 2)
 
-        type = Type.values()[world.r.nextInt(4)]
+        type = Type.values()[world.r.nextInt(Type.values().size())]
 
         // NOTE: Might not need to delay after all
-        val data = createRegionMeshData(REGION_SIZE_X, REGION_SIZE_Z, -1f, type.color, transform)
+        val data = createRegionMeshData(type, REGION_SIZE_X, REGION_SIZE_Z, -1f, type.color, transform)
         generateNormals(data)
         mesh = Mesh(data.vertices, data.indices)
 

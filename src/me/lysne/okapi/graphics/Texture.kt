@@ -4,15 +4,14 @@ import me.lysne.okapi.loadImage
 import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL12
 import org.lwjgl.opengl.GL13
-import org.lwjgl.opengl.GL15
 import java.io.File
 
 public class Texture(
         fileName: String,
-        filter: Texture.Filter,
-        wrapMode: Texture.WrapMode) {
+        filter: Texture.Filter = Texture.Filter.NEAREST,
+        wrapMode: Texture.WrapMode = Texture.WrapMode.CLAMP_TO_EDGE) {
 
-    // NOTE: Not mipmapping support
+    // NOTE: No mipmapping support
     enum class Filter(val code: Int) {
         NEAREST(GL11.GL_NEAREST),
         LINEAR(GL11.GL_LINEAR)

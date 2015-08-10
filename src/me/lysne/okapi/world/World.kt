@@ -44,7 +44,7 @@ public class World {
         createNewRegion( 0,  1)
         createNewRegion( 1,  1)
 
-        pointLights.add(PointLight(Vector3f(0f, 2f, 0f), Vector3f(10f, 10f, 10f)))
+        pointLights.add(PointLight(Vector3f(0f, 1f, 0f), Vector3f(10f, 10f, 10f)))
         coordsText = Text("Coords: (0,0)      ", Vector2f(10f, 35f))
     }
 
@@ -88,10 +88,10 @@ public class World {
         light.position.x = 4.0f + 8.0f * Math.cos(getTime()).toFloat()
         light.position.z = 4.0f + 8.0f * Math.sin(getTime()).toFloat()
 
-
-        for (region in regions.values()) {
-            region.update()
-        }
+        // TODO: Maybe they need to be updated in the future
+//        for (region in regions.values()) {
+//            region.update()
+//        }
     }
 
     public fun draw(shader: Shader) {

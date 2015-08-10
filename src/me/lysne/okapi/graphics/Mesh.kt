@@ -31,15 +31,12 @@ public class Mesh(val vertices: Array<Vertex>, val indices: ShortArray) {
         val vertexBuffer = BufferUtils.createFloatBuffer(vertices.size() * VERTEX_SIZE)
         val indexBuffer = BufferUtils.createShortBuffer(indices.size())
 
-        // NOTE: Calling reverse here might be costly
-        // NOTE: Seems the need went away?
-        vertices./*reverse().*/forEach {
-            vertexBuffer.put(it.position.x).put(it.position.y).put(it.position.z)
-            vertexBuffer.put(it.texCoord.x).put(it.texCoord.y)
-            vertexBuffer.put(it.color.x).put(it.color.y).put(it.color.z)
-            vertexBuffer.put(it.normal.x).put(it.normal.y).put(it.normal.z)
-        }
-        indices./*reverse().*/forEach {  indexBuffer.put(it) }
+        vertices.forEach { v ->
+            vertexBuffer.put(v.position.x).put(v.position.y).put(v.position.z)
+            vertexBuffer.put(v.texCoord.x).put(v.texCoord.y)
+            vertexBuffer.put(v.color.x).put(v.color.y).put(v.color.z)
+            vertexBuffer.put(v.normal.x).put(v.normal.y).put(v.normal.z) }
+        indices.forEach { i -> indexBuffer.put(i) }
         vertexBuffer.flip()
         indexBuffer.flip()
 

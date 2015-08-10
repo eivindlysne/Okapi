@@ -30,7 +30,7 @@ float light_range(Attenuation a, float i) {
 }
 
 // Lights
-uniform vec4 ambientLight = vec4(1, 1, 1, 0.05);
+uniform vec4 ambientLight = vec4(1, 1, 1, 0.5);
 uniform PointLight pointLight;
 
 // Position
@@ -79,7 +79,7 @@ void main() {
     //       Compiler will hopefully optimize it away
     float specularCoefficient = diffuseCoefficient > 0.0 ?
         pow(max(0.0, dot(surfaceToCamera, reflect(-surfaceToLight, normal))),
-            1.0) :
+            100.0) :
         0.0;
 
     // Attenuation calculation
@@ -103,8 +103,8 @@ void main() {
                       * surfaceColor;
 
     // Note: Not sure we need gamma
-    vec3 gamma = vec3(1.0 / 2.2);
-    finalColor = pow(finalColor, gamma);
+//    vec3 gamma = vec3(1.0 / 2.2);
+//    finalColor = pow(finalColor, gamma);
 
     fragColor = vec4(finalColor, 1.0);
 }

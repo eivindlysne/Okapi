@@ -25,9 +25,7 @@ public class Okapi {
 
     // Textures
     private val whiteTexture: Texture
-    private val texTexture: Texture
-    private val rockTexture: Texture
-    private val mossTexture: Texture
+    private val terrainTexture: Texture
     private val fontTexture: Texture
 
     // UI
@@ -60,13 +58,11 @@ public class Okapi {
         textShader = Shader("text_vert.glsl", "text_frag.glsl")
         textShader.registerUniforms(arrayOf("viewProjection", "font"))
         textShader.setUniform("font", 0)
-        fontTexture = Texture("fonts/font.png", Texture.Filter.LINEAR, Texture.WrapMode.CLAMP_TO_EDGE)
         fpsText = Text("FPS:  0 ", Vector2f(10f, 10f))
 
-        whiteTexture = Texture("textures/white.png", Texture.Filter.NEAREST, Texture.WrapMode.CLAMP_TO_EDGE)
-        texTexture = Texture("textures/tex.png", Texture.Filter.NEAREST, Texture.WrapMode.REPEAT)
-        rockTexture = Texture("textures/crack.png", Texture.Filter.LINEAR, Texture.WrapMode.CLAMP_TO_EDGE)
-        mossTexture = Texture("textures/moss2.png", Texture.Filter.LINEAR, Texture.WrapMode.CLAMP_TO_EDGE)
+        whiteTexture = Texture("textures/white.png")
+        terrainTexture = Texture("textures/terrain.png")
+        fontTexture = Texture("fonts/font.png")
 
         if (Config.DebugRender) {
             debugShader = Shader("debug_vert.glsl", "debug_frag.glsl")
@@ -143,7 +139,7 @@ public class Okapi {
         defaultShader.setUniform("viewProjection", camera.viewProjectionMatrix)
         defaultShader.setUniform("cameraPosition", camera.transform.position)
 
-        texTexture.bind(0)
+        terrainTexture.bind(0)
 
         // Draw World
         world.draw(defaultShader)
@@ -179,9 +175,7 @@ public class Okapi {
         textShader.destroy()
 
         whiteTexture.destroy()
-        texTexture.destroy()
-        rockTexture.destroy()
-        mossTexture.destroy()
+        terrainTexture.destroy()
         fontTexture.destroy()
 
         fpsText.destroy()

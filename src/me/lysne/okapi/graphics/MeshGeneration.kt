@@ -1,5 +1,6 @@
 package me.lysne.okapi.graphics
 
+import me.lysne.okapi.world.Region
 import org.joml.Vector2f
 import org.joml.Vector3f
 import org.lwjgl.stb.STBPerlin
@@ -31,6 +32,7 @@ public fun generateNormals(data: MeshData) {
 
 
 public fun createRegionMeshData(
+        type: Region.Type,
         xUnits: Int,
         zUnits: Int,
         yPlane: Float,
@@ -40,10 +42,16 @@ public fun createRegionMeshData(
     val density = 0.2f
     val magnitude = 2f
     val t = Vector3f()
-    transform.position.mul(density ,t)
+    transform.position.mul(density, t)
 
     val vertices: Array<Vertex> = Array(xUnits * zUnits * 4, { Vertex() })
     val indices: ShortArray = ShortArray(xUnits * zUnits * 6)
+
+    val tileHeight = 1f / 3f
+    val u1 = type.tileCoord.x * tileHeight
+    val u2 = (type.tileCoord.x + 1) * tileHeight
+    val v1 = type.tileCoord.y * tileHeight
+    val v2 = (type.tileCoord.y + 1) * tileHeight
 
     var vx = 0; var ix = 0
     for (i in 0..zUnits-1) {
@@ -63,10 +71,10 @@ public fun createRegionMeshData(
             val y4 = STBPerlin.stb_perlin_noise3(x1Mod, yPlane, z2Mod, 0, 0, 0) * magnitude
 
             // Creatte vertices
-            vertices[vx] = Vertex(Vector3f(x1, yPlane - y1, z1), Vector2f(0f, 0f), color)
-            vertices[vx+1] = Vertex(Vector3f(x2, yPlane - y2, z1), Vector2f(1f, 0f), color)
-            vertices[vx+2] = Vertex(Vector3f(x2, yPlane - y3, z2), Vector2f(1f, 1f), color)
-            vertices[vx+3] = Vertex(Vector3f(x1, yPlane - y4, z2), Vector2f(0f, 1f), color)
+            vertices[vx] = Vertex(Vector3f(x1, yPlane - y1, z1), Vector2f(u1, v1), color)
+            vertices[vx+1] = Vertex(Vector3f(x2, yPlane - y2, z1), Vector2f(u2, v1), color)
+            vertices[vx+2] = Vertex(Vector3f(x2, yPlane - y3, z2), Vector2f(u2, v2), color)
+            vertices[vx+3] = Vertex(Vector3f(x1, yPlane - y4, z2), Vector2f(u1, v2), color)
 
             // Add indices
             indices[ix++] = (vx).toShort()
