@@ -50,8 +50,10 @@ public class Okapi {
         defaultShader.registerUniforms(arrayOf(
                 "diffuse0", "diffuse1",
                 "viewProjection",
+                "cameraPosition",
                 "transform.position", "transform.orientation", "transform.scale",
-                "pointLight.position", "pointLight.intensity"))
+                "pointLight.position", "pointLight.intensity",
+                "pointLight.attenuation.constant", "pointLight.attenuation.linear", "pointLight.attenuation.quadratic"))
         defaultShader.setUniform("diffuse0", 0)
 
         textShader = Shader("text_vert.glsl", "text_frag.glsl")
@@ -137,9 +139,9 @@ public class Okapi {
         defaultShader.use()
 
         defaultShader.setUniform("viewProjection", camera.viewProjectionMatrix)
+        defaultShader.setUniform("cameraPosition", camera.transform.position)
 
         mossTexture.bind(0)
-        mossTexture.bind(1)
 
         // Draw World
         world.draw(defaultShader)

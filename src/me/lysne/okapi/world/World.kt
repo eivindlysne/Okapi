@@ -93,6 +93,10 @@ public class World {
 
         shader.setUniform("pointLight.position", light.position)
         shader.setUniform("pointLight.intensity", light.intensity)
+        shader.setUniform("pointLight.attenuation.constant", light.attenuation.constant)
+        shader.setUniform("pointLight.attenuation.linear", light.attenuation.linear)
+        shader.setUniform("pointLight.attenuation.quadratic", light.attenuation.quadratic)
+
 
         for (region in regions.values()) {
             region.draw(shader)

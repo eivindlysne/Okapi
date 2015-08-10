@@ -6,8 +6,7 @@ import org.lwjgl.BufferUtils
 import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL20
 import java.io.File
-import java.nio.FloatBuffer
-import java.util.*
+import java.util.HashMap
 
 private var programInUse = -1
 
@@ -86,6 +85,12 @@ public class Shader(vertexShaderPath: String, fragmentShaderPath: String) {
 
         use()
         GL20.glUniform1i(uniformLocations[name], i)
+    }
+
+    public fun setUniform(name: String, f: Float) {
+
+        use()
+        GL20.glUniform1f(uniformLocations[name], f)
     }
 
     public fun setUniform(name: String, v: Vector2f) {
