@@ -7,8 +7,6 @@ import me.lysne.okapi.window.getTime
 import me.lysne.okapi.world.World
 import org.joml.Vector2f
 import org.joml.Vector3f
-import org.lwjgl.opengl.GL11
-import org.lwjgl.opengl.GL13
 import java.io.File
 
 
@@ -31,6 +29,7 @@ public class Okapi {
     private val defaultShader: Shader
     private val geometryPassShader: Shader
     private val texturePassShader: Shader
+    private val pointLightShader: Shader
     private val textShader: Shader
 
     // Textures
@@ -60,7 +59,7 @@ public class Okapi {
         smallMesh = createTextureMesh(1f - (1f / 2f), 1f - (1f / 2f), 1f, 1f)
         geometryFB = Framebuffer(Framebuffer.Attachment.ColorAndDepth)
 
-        defaultShader = Shader("basic_vert.glsl", "basic_frag.glsl")
+        defaultShader = Shader("basic.vert.glsl", "basic.frag.glsl")
         defaultShader.registerUniforms(arrayOf(
                 "diffuse0", "diffuse1",
                 "viewProjection",
@@ -70,18 +69,27 @@ public class Okapi {
                 "pointLight.attenuation.constant", "pointLight.attenuation.linear", "pointLight.attenuation.quadratic"))
         defaultShader.setUniform("diffuse0", 0)
 
-        geometryPassShader = Shader("geometryPass_vert.glsl", "geometryPass_frag.glsl")
+        geometryPassShader = Shader("geometryPass.vert.glsl", "geometryPass.frag.glsl")
         geometryPassShader.registerUniforms(arrayOf(
                 "diffuse0",
                 "viewProjection",
                 "transform.position", "transform.orientation", "transform.scale"))
         geometryPassShader.setUniform("diffuse0", 0)
 
-        texturePassShader = Shader("texturePass_vert.glsl", "texturePass_frag.glsl")
+        texturePassShader = Shader("texturePass.vert.glsl", "texturePass.frag.glsl")
         texturePassShader.registerUniforms(arrayOf("scaleFactor", "texture0"))
         texturePassShader.setUniform("texture0", 0)
 
-        textShader = Shader("text_vert.glsl", "text_frag.glsl")
+        pointLightShader = Shader("genericLightPass.vert.glsl", "pointLightPass.frag.glsl")
+        pointLightShader.registerUniforms(arrayOf(
+                "diffuse", "specular", "normal", "depth",
+                "invViewProjection"))
+        pointLightShader.setUniform("diffuse", 0)
+//        pointLightShader.setUniform("specular", 1)
+//        pointLightShader.setUniform("normal", 2)
+//        pointLightShader.setUniform("depth", 3)
+
+        textShader = Shader("text.vert.glsl", "text.frag.glsl")
         textShader.registerUniforms(arrayOf("viewProjection", "font"))
         textShader.setUniform("font", 0)
         fpsText = Text("FPS:  0 ", Vector2f(10f, 10f))
@@ -91,7 +99,7 @@ public class Okapi {
         fontTexture = Texture("fonts/font.png")
 
         if (Config.DebugRender) {
-            debugShader = Shader("debug_vert.glsl", "debug_frag.glsl")
+            debugShader = Shader("debug.vert.glsl", "debug.frag.glsl")
             debugShader?.registerUniforms(arrayOf(
                     "viewProjection",
                     "transform.position", "transform.orientation", "transform.scale"))
@@ -193,8 +201,7 @@ public class Okapi {
 
         // Lighting
         texturePassShader.use()
-        GL13.glActiveTexture(GL13.GL_TEXTURE0)
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, gBuffer.diffuseColor)
+        gBuffer.bindTextures()
         smallMesh.draw()
 
 
@@ -229,6 +236,7 @@ public class Okapi {
         defaultShader.destroy()
         geometryPassShader.destroy()
         texturePassShader.destroy()
+        pointLightShader.destroy()
         textShader.destroy()
 
         whiteTexture.destroy()

@@ -2,10 +2,7 @@ package me.lysne.okapi.graphics
 
 import me.lysne.okapi.Config
 import org.lwjgl.BufferUtils
-import org.lwjgl.opengl.GL11
-import org.lwjgl.opengl.GL14
-import org.lwjgl.opengl.GL20
-import org.lwjgl.opengl.GL30
+import org.lwjgl.opengl.*
 import org.lwjgl.system.MemoryUtil
 
 public class GBuffer(
@@ -14,40 +11,40 @@ public class GBuffer(
 
     private val fbo: Int
 
-    /*private*/ val diffuseColor: Int
-    /*private*/ val specularColor: Int
-    /*private*/ val worldNormals: Int
-    /*private*/ val depthBuffer: Int
+    private val diffuse: Int
+    private val specular: Int
+    private val normals: Int
+    private val depth: Int
 
     init {
         fbo = GL30.glGenFramebuffers()
-        diffuseColor = GL11.glGenTextures()
-        specularColor = GL11.glGenTextures()
-        worldNormals = GL11.glGenTextures()
-        depthBuffer = GL11.glGenTextures()
+        diffuse = GL11.glGenTextures()
+        specular = GL11.glGenTextures()
+        normals = GL11.glGenTextures()
+        depth = GL11.glGenTextures()
 
         GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, fbo)
 
         attachRenderTarget(
-                diffuseColor,
+                diffuse,
                 GL30.GL_COLOR_ATTACHMENT0,
                 GL11.GL_RGBA8,
                 GL11.GL_RGBA,
                 GL11.GL_UNSIGNED_BYTE)
         attachRenderTarget(
-                specularColor,
+                specular,
                 GL30.GL_COLOR_ATTACHMENT1,
                 GL11.GL_RGBA8,
                 GL11.GL_RGBA,
                 GL11.GL_UNSIGNED_BYTE)
         attachRenderTarget(
-                worldNormals,
+                normals,
                 GL30.GL_COLOR_ATTACHMENT2,
-                GL11.GL_RGB10_A2,
+                GL11.GL_RGBA8,
                 GL11.GL_RGBA,
-                GL11.GL_FLOAT)
+                GL11.GL_UNSIGNED_BYTE)
         attachRenderTarget(
-                depthBuffer,
+                depth,
                 GL30.GL_DEPTH_ATTACHMENT,
                 GL14.GL_DEPTH_COMPONENT24,
                 GL11.GL_DEPTH_COMPONENT,
@@ -59,9 +56,7 @@ public class GBuffer(
             .put(GL30.GL_COLOR_ATTACHMENT2)
  //           .put(GL30.GL_DEPTH_ATTACHMENT) // FIXME: Causing error
         drawBuffers.flip()
-        println(GL11.glGetError())
         GL20.glDrawBuffers(drawBuffers)
-        println(GL11.glGetError())
 
         if (GL30.glCheckFramebufferStatus(GL30.GL_FRAMEBUFFER) !=
                 GL30.GL_FRAMEBUFFER_COMPLETE) {
@@ -103,10 +98,10 @@ public class GBuffer(
 
     public fun destroy() {
         GL30.glDeleteFramebuffers(fbo)
-        GL11.glDeleteTextures(diffuseColor)
-        GL11.glDeleteTextures(specularColor)
-        GL11.glDeleteTextures(worldNormals)
-        GL11.glDeleteTextures(depthBuffer)
+        GL11.glDeleteTextures(diffuse)
+        GL11.glDeleteTextures(specular)
+        GL11.glDeleteTextures(normals)
+        GL11.glDeleteTextures(depth)
     }
 
     public fun bind() {
@@ -116,5 +111,16 @@ public class GBuffer(
     public fun unbind() {
         GL11.glFlush()
         GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0)
+    }
+
+    public fun bindTextures() {
+        GL13.glActiveTexture(GL13.GL_TEXTURE0)
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, diffuse)
+        GL13.glActiveTexture(GL13.GL_TEXTURE1)
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, specular)
+        GL13.glActiveTexture(GL13.GL_TEXTURE2)
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, normals)
+        GL13.glActiveTexture(GL13.GL_TEXTURE3)
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, depth)
     }
 }

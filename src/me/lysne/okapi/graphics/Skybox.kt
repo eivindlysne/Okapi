@@ -28,7 +28,7 @@ public class Skybox(
         vbo = GL15.glGenBuffers()
         tex = GL11.glGenTextures()
 
-        shader = Shader("skybox_vert.glsl", "skybox_frag.glsl")
+        shader = Shader("skybox.vert.glsl", "skybox.frag.glsl")
         shader.registerUniforms(arrayOf(
                 "skybox",
                 "transform.position",

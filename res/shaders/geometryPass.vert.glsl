@@ -24,8 +24,7 @@ out vec3 vColor;
 out vec3 vNormal;
 out vec3 vWordSpacePosition;
 
-void main() {
-
+void main(void) {
 
     vec3 pos = position;
     pos = transform.position + quaternion_rotate(

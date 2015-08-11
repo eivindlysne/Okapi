@@ -5,8 +5,8 @@ import me.lysne.okapi.graphics.*
 import org.joml.Vector2f
 import org.joml.Vector3f
 
-val REGION_SIZE_X: Int = 16
-val REGION_SIZE_Z: Int = 16
+val REGION_SIZE_X: Int = 32
+val REGION_SIZE_Z: Int = 32
 
 public class Region(val worldX: Int, val worldZ: Int, val world: World) {
 

@@ -1,11 +1,7 @@
 package me.lysne.okapi
 
-import me.lysne.okapi.graphics.Mesh
 import me.lysne.okapi.graphics.Shader
 import me.lysne.okapi.graphics.Texture
-import me.lysne.okapi.graphics.Vertex
-import org.joml.Vector2f
-import org.joml.Vector3f
 
 public object Test {
 
@@ -14,7 +10,7 @@ public object Test {
     }
 
     public fun getBasicShader() : Shader {
-        val shader = Shader("basic_vert.glsl", "basic_frag.glsl")
+        val shader = Shader("basic.vert.glsl", "basic.frag.glsl")
         shader.registerUniforms(arrayOf(
                 "diffuse0", "diffuse1",
                 "viewProjection",

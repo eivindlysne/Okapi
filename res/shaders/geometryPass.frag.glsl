@@ -30,9 +30,9 @@ in vec3 vWordSpacePosition;
 
 out vec4 gDiffuseColor;
 out vec4 gSpecularColor;
-out vec4 gWorldNormals;
+out vec4 gNormals;
 
-void main() {
+void main(void) {
 
     vec4 diffuseColor = texture2D(diffuse0, vTexCoord);
     vec3 surfaceColor = diffuseColor.rgb * vColor;
@@ -40,6 +40,6 @@ void main() {
     vec3 normal = normalize(quaternion_rotate(transform.orientation, vNormal));
 
     gDiffuseColor = vec4(surfaceColor, 1.0);
-    gSpecularColor = vec4(1, 0, 1, 1.0); // TODO: Materials
-    gWorldNormals = vec4(0.5 * (normal + vec3(1.0)), 1.0);
+    gSpecularColor = vec4(1, 1, 1, 1.0 / 4.0); // TODO: Materials 4.0==specularExponent
+    gNormals = vec4(0.5 * (normal + vec3(1.0)), 1.0);
 }
