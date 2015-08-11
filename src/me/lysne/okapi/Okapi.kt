@@ -19,8 +19,14 @@ public class Okapi {
     private val skybox: Skybox
     private val world: World
 
+    // Framebuffers
+    private val screenMesh: TextureMesh
+    private val smallMesh: TextureMesh
+    private val geometryFB: Framebuffer
+
     // Shaders
     private val defaultShader: Shader
+    private val textureShader: Shader
     private val textShader: Shader
 
     // Textures
@@ -45,6 +51,10 @@ public class Okapi {
 
         world = World()
 
+        screenMesh = createFullscreenTextureMesh()
+        smallMesh = createSmallTextureMesh()
+        geometryFB = Framebuffer(Framebuffer.Attachment.ColorAndDepth)
+
         defaultShader = Shader("basic_vert.glsl", "basic_frag.glsl")
         defaultShader.registerUniforms(arrayOf(
                 "diffuse0", "diffuse1",
@@ -54,6 +64,10 @@ public class Okapi {
                 "pointLight.position", "pointLight.intensity",
                 "pointLight.attenuation.constant", "pointLight.attenuation.linear", "pointLight.attenuation.quadratic"))
         defaultShader.setUniform("diffuse0", 0)
+
+        textureShader = Shader("texturePass_vert.glsl", "texturePass_frag.glsl")
+        textureShader.registerUniforms(arrayOf("scaleFactor", "texture0"))
+        textureShader.setUniform("texture0", 0)
 
         textShader = Shader("text_vert.glsl", "text_frag.glsl")
         textShader.registerUniforms(arrayOf("viewProjection", "font"))
@@ -130,6 +144,8 @@ public class Okapi {
     }
 
     private fun render(alpha: Double) {
+
+        geometryFB.bind()
         window.clear()
 
         skybox.draw(camera.viewProjectionMatrix)
@@ -144,6 +160,9 @@ public class Okapi {
         // Draw World
         world.draw(defaultShader)
 
+        geometryFB.unbind()
+        window.clear()
+
         if (Config.DebugRender)
             renderDebug()
 
@@ -154,6 +173,10 @@ public class Okapi {
         fpsText.draw()
         world.drawText()
 
+        textureShader.use()
+        geometryFB.bindTexture(0, Framebuffer.Attachment.Color)
+        screenMesh.draw()
+        //smallMesh.draw()
 
         window.swap()
     }
@@ -171,7 +194,12 @@ public class Okapi {
         window.destroy()
         world.destroy()
 
+        screenMesh.destroy()
+        smallMesh.destroy()
+        geometryFB.destroy()
+
         defaultShader.destroy()
+        textureShader.destroy()
         textShader.destroy()
 
         whiteTexture.destroy()

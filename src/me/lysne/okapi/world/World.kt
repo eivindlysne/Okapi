@@ -7,7 +7,6 @@ import me.lysne.okapi.graphics.Text
 import me.lysne.okapi.window.getTime
 import org.joml.Vector2f
 import org.joml.Vector3f
-import org.joml.Vector4f
 import java.util.ArrayList
 import java.util.HashMap
 import java.util.Random
@@ -19,9 +18,6 @@ public class World {
     private val coordsText: Text
 
     val r = Random()
-
-    val ambientLight = Vector4f(1f, 1f, 0f, .2f)
-//    val light: PointLight
 
     var currentRegion: Region
 
@@ -44,7 +40,7 @@ public class World {
         createNewRegion( 0,  1)
         createNewRegion( 1,  1)
 
-        pointLights.add(PointLight(Vector3f(0f, 1f, 0f), Vector3f(10f, 10f, 10f)))
+        pointLights.add(PointLight(Vector3f(0f, 4f, 0f), Vector3f(10f, 10f, 10f)))
         coordsText = Text("Coords: (0,0)      ", Vector2f(10f, 35f))
     }
 

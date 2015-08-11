@@ -59,12 +59,7 @@ public class Texture(
         GL11.glDeleteTextures(handle)
     }
 
-    public fun bind() {
-        GL13.glActiveTexture(GL13.GL_TEXTURE0)
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, handle)
-    }
-
-    public fun bind(unit: Int) {
+    public fun bind(unit: Int = 0) {
 
         if (unit < 0 || unit > 31) error("Invalid texture unit")
 

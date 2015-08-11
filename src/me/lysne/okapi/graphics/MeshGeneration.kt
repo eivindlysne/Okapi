@@ -40,7 +40,7 @@ public fun createRegionMeshData(
         transform: Transform) : MeshData {
 
     val density = 0.2f
-    val magnitude = 2f
+    val magnitude = 3f
     val t = Vector3f()
     transform.position.mul(density, t)
 
@@ -192,6 +192,21 @@ public fun createTiledPerlinPlane(xUnits: Int, zUnits: Int, plane: Float, color:
     return Mesh(vertices, indices)
 }
 
+public fun createFullscreenTextureMesh() : TextureMesh {
+    return TextureMesh(arrayOf(
+            Vertex(Vector3f(-1f, -1f, 0f), Vector2f(0f, 0f)),
+            Vertex(Vector3f( 1f, -1f, 0f), Vector2f(1f, 0f)),
+            Vertex(Vector3f( 1f,  1f, 0f), Vector2f(1f, 1f)),
+            Vertex(Vector3f(-1f,  1f, 0f), Vector2f(0f, 1f))))
+}
+
+public fun createSmallTextureMesh() : TextureMesh {
+    return TextureMesh(arrayOf(
+            Vertex(Vector3f(-1f,  0f, 0f), Vector2f(0f, 0f)),
+            Vertex(Vector3f( 0f,  0f, 0f), Vector2f(1f, 0f)),
+            Vertex(Vector3f( 0f,  1f, 0f), Vector2f(1f, 1f)),
+            Vertex(Vector3f(-1f,  1f, 0f), Vector2f(0f, 1f))))
+}
 
 public fun createTestMesh() : Mesh {
     val vertices = arrayOf(

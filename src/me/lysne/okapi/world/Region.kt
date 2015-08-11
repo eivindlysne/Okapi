@@ -5,16 +5,16 @@ import me.lysne.okapi.graphics.*
 import org.joml.Vector2f
 import org.joml.Vector3f
 
-val REGION_SIZE_X: Int = 32
-val REGION_SIZE_Z: Int = 32
+val REGION_SIZE_X: Int = 16
+val REGION_SIZE_Z: Int = 16
 
 public class Region(val worldX: Int, val worldZ: Int, val world: World) {
 
     // Need lots of other values for diversity
     enum class Type(val color: Vector3f, val tileCoord: Vector2f) {
-        Field(Vector3f(1f, 1f, 1f), Vector2f(0f, 2f)),
-        Desert(Vector3f(1f, 1f, 1f), Vector2f(0f, 1f)),
-        Rocky(Vector3f(1f, 1f, 1f), Vector2f(0f, 0f)),
+        Field(Vector3f(.2f, 1f, .3f), Vector2f(0f, 2f)),
+        Desert(Vector3f(.76f, .74f, .5f), Vector2f(0f, 1f)),
+        Rocky(Vector3f(.34f, .37f, .39f), Vector2f(0f, 0f)),
 //        Water(Vector3f(.117f, .564f, 1f))
     }
 

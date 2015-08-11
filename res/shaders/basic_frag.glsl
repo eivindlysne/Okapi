@@ -22,15 +22,15 @@ vec3 quaternion_rotate(vec4 q, vec3 v) {
     return v + 2.0 * cross(cross(v, q.xyz) + q.w * v, q.xyz);
 }
 
-float light_range(Attenuation a, float i) {
-
+float light_range(Attenuation a, vec3 intensity) {
+    float i = max(intensity.r, max(intensity.g, intensity.b));
     return -a.linear + sqrt(
         a.linear * a.linear -
         4.0 * a.quadratic * (a.constant - 256.0 * i)); // 256 = color depth
 }
 
 // Lights
-uniform vec4 ambientLight = vec4(1, 1, 1, 0.5);
+uniform vec4 ambientLight = vec4(1, 1, 1, 0.3);
 uniform PointLight pointLight;
 
 // Position
@@ -79,7 +79,7 @@ void main() {
     //       Compiler will hopefully optimize it away
     float specularCoefficient = diffuseCoefficient > 0.0 ?
         pow(max(0.0, dot(surfaceToCamera, reflect(-surfaceToLight, normal))),
-            100.0) :
+            1.0) :
         0.0;
 
     // Attenuation calculation
@@ -90,7 +90,7 @@ void main() {
         pointLight.attenuation.linear * lightDistance +
         pointLight.attenuation.quadratic * lightDistance * lightDistance;
     attenuation = 1.0 / attenuation;
-    float r = light_range(pointLight.attenuation, 1.0);
+    float r = light_range(pointLight.attenuation, pointLight.intensity);
     attenuation *= clamp(
         pow(1 - pow(lightDistance / r, 4.0), 2.0),
         0, 1);

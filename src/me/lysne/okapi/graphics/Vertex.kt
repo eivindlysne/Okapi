@@ -22,4 +22,5 @@ public class Vertex(
 
 public val VERTEX_SIZE: Int = 11
 public val TEXT_VERTEX_SIZE: Int = 8
+public val TEXTURE_VERTEX_SIZE: Int = 5
 public val FLOAT_SIZE: Int = 4
