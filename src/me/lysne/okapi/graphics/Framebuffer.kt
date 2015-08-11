@@ -1,10 +1,8 @@
 package me.lysne.okapi.graphics
 
 import me.lysne.okapi.Config
-import org.lwjgl.opengl.GL11
-import org.lwjgl.opengl.GL13
-import org.lwjgl.opengl.GL14
-import org.lwjgl.opengl.GL30
+import org.lwjgl.BufferUtils
+import org.lwjgl.opengl.*
 import org.lwjgl.system.MemoryUtil
 
 public class Framebuffer(
@@ -97,9 +95,16 @@ public class Framebuffer(
 
         } else depthTexture = -1
 
+        val drawBuffer = BufferUtils.createIntBuffer(1)
+        if (attachment == Attachment.Color || attachment == Attachment.ColorAndDepth)
+            drawBuffer.put(GL30.GL_COLOR_ATTACHMENT0)
+//        if (attachment == Attachment.Depth || attachment == Attachment.ColorAndDepth)
+//            drawBuffer.put(GL30.GL_DEPTH_ATTACHMENT)
+        drawBuffer.flip()
+        GL20.glDrawBuffers(drawBuffer)
+
         if (GL30.glCheckFramebufferStatus(GL30.GL_FRAMEBUFFER) !=
             GL30.GL_FRAMEBUFFER_COMPLETE) {
-            destroy()
             error("Failed to create framebuffer")
         }
 

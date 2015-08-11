@@ -7,6 +7,8 @@ import me.lysne.okapi.window.getTime
 import me.lysne.okapi.world.World
 import org.joml.Vector2f
 import org.joml.Vector3f
+import org.lwjgl.opengl.GL11
+import org.lwjgl.opengl.GL13
 import java.io.File
 
 
@@ -23,10 +25,12 @@ public class Okapi {
     private val screenMesh: TextureMesh
     private val smallMesh: TextureMesh
     private val geometryFB: Framebuffer
+    private val gBuffer: GBuffer
 
     // Shaders
     private val defaultShader: Shader
-    private val textureShader: Shader
+    private val geometryPassShader: Shader
+    private val texturePassShader: Shader
     private val textShader: Shader
 
     // Textures
@@ -51,8 +55,9 @@ public class Okapi {
 
         world = World()
 
-        screenMesh = createFullscreenTextureMesh()
-        smallMesh = createSmallTextureMesh()
+        gBuffer = GBuffer()
+        screenMesh = createTextureMesh(-1f, -1f, 1f, 1f)
+        smallMesh = createTextureMesh(1f - (1f / 2f), 1f - (1f / 2f), 1f, 1f)
         geometryFB = Framebuffer(Framebuffer.Attachment.ColorAndDepth)
 
         defaultShader = Shader("basic_vert.glsl", "basic_frag.glsl")
@@ -65,9 +70,16 @@ public class Okapi {
                 "pointLight.attenuation.constant", "pointLight.attenuation.linear", "pointLight.attenuation.quadratic"))
         defaultShader.setUniform("diffuse0", 0)
 
-        textureShader = Shader("texturePass_vert.glsl", "texturePass_frag.glsl")
-        textureShader.registerUniforms(arrayOf("scaleFactor", "texture0"))
-        textureShader.setUniform("texture0", 0)
+        geometryPassShader = Shader("geometryPass_vert.glsl", "geometryPass_frag.glsl")
+        geometryPassShader.registerUniforms(arrayOf(
+                "diffuse0",
+                "viewProjection",
+                "transform.position", "transform.orientation", "transform.scale"))
+        geometryPassShader.setUniform("diffuse0", 0)
+
+        texturePassShader = Shader("texturePass_vert.glsl", "texturePass_frag.glsl")
+        texturePassShader.registerUniforms(arrayOf("scaleFactor", "texture0"))
+        texturePassShader.setUniform("texture0", 0)
 
         textShader = Shader("text_vert.glsl", "text_frag.glsl")
         textShader.registerUniforms(arrayOf("viewProjection", "font"))
@@ -145,7 +157,22 @@ public class Okapi {
 
     private fun render(alpha: Double) {
 
-        geometryFB.bind()
+        // Geometry pass
+        gBuffer.bind()
+            window.clear()
+
+            skybox.draw(camera.viewProjectionMatrix)
+
+            geometryPassShader.use()
+            geometryPassShader.setUniform("viewProjection", camera.viewProjectionMatrix)
+
+            whiteTexture.bind(0)
+
+            // Draw World
+            world.drawGeometry(geometryPassShader)
+        gBuffer.unbind()
+
+        // TODO: Temp lighting
         window.clear()
 
         skybox.draw(camera.viewProjectionMatrix)
@@ -157,14 +184,19 @@ public class Okapi {
 
         terrainTexture.bind(0)
 
-        // Draw World
         world.draw(defaultShader)
 
-        geometryFB.unbind()
-        window.clear()
-
+        // Debug pass
         if (Config.DebugRender)
             renderDebug()
+
+
+        // Lighting
+        texturePassShader.use()
+        GL13.glActiveTexture(GL13.GL_TEXTURE0)
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, gBuffer.diffuseColor)
+        smallMesh.draw()
+
 
         // Draw Ortho (Text and UI)
         textShader.use()
@@ -172,11 +204,6 @@ public class Okapi {
         fontTexture.bind(0)
         fpsText.draw()
         world.drawText()
-
-        textureShader.use()
-        geometryFB.bindTexture(0, Framebuffer.Attachment.Color)
-        screenMesh.draw()
-        //smallMesh.draw()
 
         window.swap()
     }
@@ -197,9 +224,11 @@ public class Okapi {
         screenMesh.destroy()
         smallMesh.destroy()
         geometryFB.destroy()
+        gBuffer.destroy()
 
         defaultShader.destroy()
-        textureShader.destroy()
+        geometryPassShader.destroy()
+        texturePassShader.destroy()
         textShader.destroy()
 
         whiteTexture.destroy()

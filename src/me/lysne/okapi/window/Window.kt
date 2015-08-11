@@ -57,7 +57,6 @@ public class Window(val width: Int, val height: Int, val title: String) {
         GL11.glClearColor(0f, 0f, 0f, 0f)
         GL11.glViewport(0, 0, width, height)
 
-        GL11.glEnable(GL11.GL_TEXTURE_2D) // Not needed?
         GL11.glEnable(GL32.GL_TEXTURE_CUBE_MAP_SEAMLESS) // Dunno if doin' anything
 
         GL11.glEnable(GL11.GL_DEPTH_TEST)

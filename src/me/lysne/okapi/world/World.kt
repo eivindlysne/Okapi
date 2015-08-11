@@ -40,7 +40,7 @@ public class World {
         createNewRegion( 0,  1)
         createNewRegion( 1,  1)
 
-        pointLights.add(PointLight(Vector3f(0f, 4f, 0f), Vector3f(10f, 10f, 10f)))
+        pointLights.add(PointLight(Vector3f(0f, 4f, 0f), Vector3f(100f, 100f, 100f)))
         coordsText = Text("Coords: (0,0)      ", Vector2f(10f, 35f))
     }
 
@@ -101,6 +101,12 @@ public class World {
         shader.setUniform("pointLight.attenuation.quadratic", light.attenuation.quadratic)
 
 
+        for (region in regions.values()) {
+            region.draw(shader)
+        }
+    }
+
+    public fun drawGeometry(shader: Shader) {
         for (region in regions.values()) {
             region.draw(shader)
         }

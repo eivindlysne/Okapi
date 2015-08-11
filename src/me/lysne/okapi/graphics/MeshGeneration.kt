@@ -192,21 +192,14 @@ public fun createTiledPerlinPlane(xUnits: Int, zUnits: Int, plane: Float, color:
     return Mesh(vertices, indices)
 }
 
-public fun createFullscreenTextureMesh() : TextureMesh {
+public fun createTextureMesh(x0: Float, y0: Float, x1: Float, y1: Float) : TextureMesh {
     return TextureMesh(arrayOf(
-            Vertex(Vector3f(-1f, -1f, 0f), Vector2f(0f, 0f)),
-            Vertex(Vector3f( 1f, -1f, 0f), Vector2f(1f, 0f)),
-            Vertex(Vector3f( 1f,  1f, 0f), Vector2f(1f, 1f)),
-            Vertex(Vector3f(-1f,  1f, 0f), Vector2f(0f, 1f))))
+            Vertex(Vector3f(x0, y0, 0f), Vector2f(0f, 0f)),
+            Vertex(Vector3f(x1, y0, 0f), Vector2f(1f, 0f)),
+            Vertex(Vector3f(x1, y1, 0f), Vector2f(1f, 1f)),
+            Vertex(Vector3f(x0, y1, 0f), Vector2f(0f, 1f))))
 }
 
-public fun createSmallTextureMesh() : TextureMesh {
-    return TextureMesh(arrayOf(
-            Vertex(Vector3f(-1f,  0f, 0f), Vector2f(0f, 0f)),
-            Vertex(Vector3f( 0f,  0f, 0f), Vector2f(1f, 0f)),
-            Vertex(Vector3f( 0f,  1f, 0f), Vector2f(1f, 1f)),
-            Vertex(Vector3f(-1f,  1f, 0f), Vector2f(0f, 1f))))
-}
 
 public fun createTestMesh() : Mesh {
     val vertices = arrayOf(
