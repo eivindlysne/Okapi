@@ -29,13 +29,12 @@ public class Skybox(
         tex = GL11.glGenTextures()
 
         shader = Shader("skybox.vert.glsl", "skybox.frag.glsl")
-        shader.registerUniforms(arrayOf(
+        shader.registerUniforms(
                 "skybox",
                 "transform.position",
                 "transform.orientation",
                 "transform.scale",
-                "viewProjection"
-        ))
+                "viewProjection")
         shader.setUniform("skybox", 0)
 
         transform = Transform()

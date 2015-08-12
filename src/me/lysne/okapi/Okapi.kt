@@ -5,6 +5,7 @@ import me.lysne.okapi.window.Input
 import me.lysne.okapi.window.Window
 import me.lysne.okapi.window.getTime
 import me.lysne.okapi.world.World
+import org.joml.Matrix4f
 import org.joml.Vector2f
 import org.joml.Vector3f
 import java.io.File
@@ -22,7 +23,7 @@ public class Okapi {
     // Framebuffers
     private val screenMesh: TextureMesh
     private val smallMesh: TextureMesh
-    private val geometryFB: Framebuffer
+    private val lightFramebuffer: Framebuffer
     private val gBuffer: GBuffer
 
     // Shaders
@@ -57,40 +58,42 @@ public class Okapi {
         gBuffer = GBuffer()
         screenMesh = createTextureMesh(-1f, -1f, 1f, 1f)
         smallMesh = createTextureMesh(1f - (1f / 2f), 1f - (1f / 2f), 1f, 1f)
-        geometryFB = Framebuffer(Framebuffer.Attachment.ColorAndDepth)
+        lightFramebuffer = Framebuffer(Framebuffer.Attachment.ColorAndDepth)
 
         defaultShader = Shader("basic.vert.glsl", "basic.frag.glsl")
-        defaultShader.registerUniforms(arrayOf(
+        defaultShader.registerUniforms(
                 "diffuse0", "diffuse1",
                 "viewProjection",
                 "cameraPosition",
                 "transform.position", "transform.orientation", "transform.scale",
                 "pointLight.position", "pointLight.intensity",
-                "pointLight.attenuation.constant", "pointLight.attenuation.linear", "pointLight.attenuation.quadratic"))
+                "pointLight.attenuation.constant", "pointLight.attenuation.linear", "pointLight.attenuation.quadratic")
         defaultShader.setUniform("diffuse0", 0)
 
         geometryPassShader = Shader("geometryPass.vert.glsl", "geometryPass.frag.glsl")
-        geometryPassShader.registerUniforms(arrayOf(
+        geometryPassShader.registerUniforms(
                 "diffuse0",
                 "viewProjection",
-                "transform.position", "transform.orientation", "transform.scale"))
+                "transform.position", "transform.orientation", "transform.scale")
         geometryPassShader.setUniform("diffuse0", 0)
 
         texturePassShader = Shader("texturePass.vert.glsl", "texturePass.frag.glsl")
-        texturePassShader.registerUniforms(arrayOf("scaleFactor", "texture0"))
+        texturePassShader.registerUniforms("scaleFactor", "texture0")
         texturePassShader.setUniform("texture0", 0)
 
         pointLightShader = Shader("genericLightPass.vert.glsl", "pointLightPass.frag.glsl")
-        pointLightShader.registerUniforms(arrayOf(
+        pointLightShader.registerUniforms(
                 "diffuse", "specular", "normal", "depth",
-                "invViewProjection"))
+                "invViewProjection",
+                "light.color", "light.intensity", "light.position", "light.range",
+                "light.attenuation.constant", "light.attenuation.linear", "light.attenuation.quadratic")
         pointLightShader.setUniform("diffuse", 0)
 //        pointLightShader.setUniform("specular", 1)
-//        pointLightShader.setUniform("normal", 2)
-//        pointLightShader.setUniform("depth", 3)
+        pointLightShader.setUniform("normal", 2)
+        pointLightShader.setUniform("depth", 3)
 
         textShader = Shader("text.vert.glsl", "text.frag.glsl")
-        textShader.registerUniforms(arrayOf("viewProjection", "font"))
+        textShader.registerUniforms("viewProjection", "font")
         textShader.setUniform("font", 0)
         fpsText = Text("FPS:  0 ", Vector2f(10f, 10f))
 
@@ -100,9 +103,9 @@ public class Okapi {
 
         if (Config.DebugRender) {
             debugShader = Shader("debug.vert.glsl", "debug.frag.glsl")
-            debugShader?.registerUniforms(arrayOf(
+            debugShader?.registerUniforms(
                     "viewProjection",
-                    "transform.position", "transform.orientation", "transform.scale"))
+                    "transform.position", "transform.orientation", "transform.scale")
         }
     }
 
@@ -169,7 +172,7 @@ public class Okapi {
         gBuffer.bind()
             window.clear()
 
-            skybox.draw(camera.viewProjectionMatrix)
+//            skybox.draw(camera.viewProjectionMatrix)
 
             geometryPassShader.use()
             geometryPassShader.setUniform("viewProjection", camera.viewProjectionMatrix)
@@ -181,28 +184,41 @@ public class Okapi {
         gBuffer.unbind()
 
         // TODO: Temp lighting
-        window.clear()
-
-        skybox.draw(camera.viewProjectionMatrix)
-
-        defaultShader.use()
-
-        defaultShader.setUniform("viewProjection", camera.viewProjectionMatrix)
-        defaultShader.setUniform("cameraPosition", camera.transform.position)
-
-        terrainTexture.bind(0)
-
-        world.draw(defaultShader)
+//        window.clear()
+//
+//        skybox.draw(camera.viewProjectionMatrix)
+//
+//        defaultShader.use()
+//
+//        defaultShader.setUniform("viewProjection", camera.viewProjectionMatrix)
+//        defaultShader.setUniform("cameraPosition", camera.transform.position)
+//
+//        terrainTexture.bind(0)
+//
+//        world.draw(defaultShader)
 
         // Debug pass
         if (Config.DebugRender)
             renderDebug()
 
-
         // Lighting
+        lightFramebuffer.bind()
+            window.clear()
+            pointLightShader.use()
+            pointLightShader.setUniform("invViewProjection", Matrix4f(camera.viewProjectionMatrix).invert())
+            gBuffer.bindTextures()
+            world.drawLights(pointLightShader, screenMesh)
+        lightFramebuffer.unbind()
+
+        // Texture pass
+        window.clear()
         texturePassShader.use()
-        gBuffer.bindTextures()
-        smallMesh.draw()
+        lightFramebuffer.bindTexture(0, Framebuffer.Attachment.Color)
+        screenMesh.draw()
+
+        // Skybox pass use stencil buffer?
+        // FIXME: Not working
+//        skybox.draw(camera.viewProjectionMatrix)
 
 
         // Draw Ortho (Text and UI)
@@ -230,7 +246,7 @@ public class Okapi {
 
         screenMesh.destroy()
         smallMesh.destroy()
-        geometryFB.destroy()
+        lightFramebuffer.destroy()
         gBuffer.destroy()
 
         defaultShader.destroy()

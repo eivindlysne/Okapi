@@ -43,6 +43,13 @@ public class Region(val worldX: Int, val worldZ: Int, val world: World) {
         if (Config.Debug) {
             debugMesh = DebugMesh(data.vertices, data.indices)
         }
+
+        world.pointLights.add(PointLight(
+//                Vector3f(Math.random().toFloat(), Math.random().toFloat(), Math.random().toFloat()),
+                Vector3f(1f, 1f, 1f),
+                10f,
+                Vector3f(worldX * REGION_SIZE_X.toFloat(), 4f, worldZ * REGION_SIZE_Z.toFloat()),
+                Attenuation()))
     }
 
 

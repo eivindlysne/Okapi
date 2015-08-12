@@ -1,12 +1,9 @@
 package me.lysne.okapi.world
 
-import me.lysne.okapi.graphics.Camera
-import me.lysne.okapi.graphics.PointLight
-import me.lysne.okapi.graphics.Shader
-import me.lysne.okapi.graphics.Text
-import me.lysne.okapi.window.getTime
+import me.lysne.okapi.graphics.*
 import org.joml.Vector2f
 import org.joml.Vector3f
+import org.lwjgl.opengl.GL11
 import java.util.ArrayList
 import java.util.HashMap
 import java.util.Random
@@ -14,11 +11,11 @@ import java.util.Random
 public class World {
 
     private val regions: MutableMap<Pair<Int, Int>, Region>
-    private val pointLights: ArrayList<PointLight>
     private val coordsText: Text
 
     val r = Random()
 
+    val pointLights: ArrayList<PointLight>
     var currentRegion: Region
 
     init {
@@ -40,7 +37,6 @@ public class World {
         createNewRegion( 0,  1)
         createNewRegion( 1,  1)
 
-        pointLights.add(PointLight(Vector3f(0f, 4f, 0f), Vector3f(100f, 100f, 100f)))
         coordsText = Text("Coords: (0,0)      ", Vector2f(10f, 35f))
     }
 
@@ -79,10 +75,11 @@ public class World {
             currentRegion = newRegion
         }
 
-        // TODO: Temp
-        val light = pointLights.get(0)
-        light.position.x = 4.0f + 8.0f * Math.cos(getTime()).toFloat()
-        light.position.z = 4.0f + 8.0f * Math.sin(getTime()).toFloat()
+//        val t = getTime()
+//        for (light in pointLights) {
+//            light.position.x = 4.0f + 8.0f * Math.cos(t).toFloat()
+//            light.position.z = 4.0f + 8.0f * Math.sin(t).toFloat()
+//        }
 
         // TODO: Maybe they need to be updated in the future
 //        for (region in regions.values()) {
@@ -110,6 +107,30 @@ public class World {
         for (region in regions.values()) {
             region.draw(shader)
         }
+    }
+
+    public fun drawLights(shader: Shader, mesh: TextureMesh) {
+
+        GL11.glDepthMask(false)
+        GL11.glBlendFunc(GL11.GL_ONE, GL11.GL_ONE)
+
+
+        for (light in pointLights) {
+
+            shader.setUniform("light.color", light.color)
+            shader.setUniform("light.intensity", light.intensity)
+            shader.setUniform("light.position", light.position)
+            shader.setUniform("light.attenuation.constant", light.attenuation.constant)
+            shader.setUniform("light.attenuation.linear", light.attenuation.linear)
+            shader.setUniform("light.attenuation.quadratic", light.attenuation.quadratic)
+            shader.setUniform("light.range", light.range)
+
+            mesh.draw()
+        }
+
+        GL11.glDepthMask(true)
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA)
+
     }
 
     // FIXME: Maybe not the best place for this

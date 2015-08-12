@@ -11,12 +11,12 @@ public object Test {
 
     public fun getBasicShader() : Shader {
         val shader = Shader("basic.vert.glsl", "basic.frag.glsl")
-        shader.registerUniforms(arrayOf(
+        shader.registerUniforms(
                 "diffuse0", "diffuse1",
                 "viewProjection",
                 "transform.position",
                 "transform.orientation",
-                "transform.scale"))
+                "transform.scale")
         shader.setUniform("diffuse0", 0)
 //        shader.setUniform("diffuse1", 1)
         return shader

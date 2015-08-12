@@ -65,10 +65,10 @@ public fun createRegionMeshData(
             val z2Mod = z2 * density + t.z
 
             // Calculate height with perlin noise
-            val y1 = STBPerlin.stb_perlin_noise3(x1Mod, yPlane, z1Mod, 0, 0, 0) * magnitude
-            val y2 = STBPerlin.stb_perlin_noise3(x2Mod, yPlane, z1Mod, 0, 0, 0) * magnitude
-            val y3 = STBPerlin.stb_perlin_noise3(x2Mod, yPlane, z2Mod, 0, 0, 0) * magnitude
-            val y4 = STBPerlin.stb_perlin_noise3(x1Mod, yPlane, z2Mod, 0, 0, 0) * magnitude
+            val y1 = 0//STBPerlin.stb_perlin_noise3(x1Mod, yPlane, z1Mod, 0, 0, 0) * magnitude
+            val y2 = 0//STBPerlin.stb_perlin_noise3(x2Mod, yPlane, z1Mod, 0, 0, 0) * magnitude
+            val y3 = 0//STBPerlin.stb_perlin_noise3(x2Mod, yPlane, z2Mod, 0, 0, 0) * magnitude
+            val y4 = 0//STBPerlin.stb_perlin_noise3(x1Mod, yPlane, z2Mod, 0, 0, 0) * magnitude
 
             // Creatte vertices
             vertices[vx] = Vertex(Vector3f(x1, yPlane - y1, z1), Vector2f(u1, v1), color)

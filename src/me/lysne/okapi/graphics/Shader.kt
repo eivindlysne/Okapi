@@ -69,7 +69,7 @@ public class Shader(vertexShaderPath: String, fragmentShaderPath: String) {
         }
     }
 
-    public fun registerUniforms(uniforms: Array<String>) {
+    public fun registerUniforms(vararg uniforms: String) {
 
         for (uniform in uniforms) {
             val location = GL20.glGetUniformLocation(program, uniform)
