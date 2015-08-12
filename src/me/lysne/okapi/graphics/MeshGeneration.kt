@@ -32,15 +32,17 @@ public fun generateNormals(data: MeshData) {
 
 
 public fun createRegionMeshData(
+        north: Region?, south: Region?, west: Region?, east: Region?,
         type: Region.Type,
         xUnits: Int,
         zUnits: Int,
         yPlane: Float,
-        color: Vector3f = Vector3f(1f, 1f, 1f),
+        color: Vector3f,
         transform: Transform) : MeshData {
 
-    val density = 0.2f
-    val magnitude = 3f
+
+    val density = 0.1f
+
     val t = Vector3f()
     transform.position.mul(density, t)
 
@@ -55,34 +57,57 @@ public fun createRegionMeshData(
 
     var vx = 0; var ix = 0
     for (i in 0..zUnits-1) {
-        for (j in 0..xUnits-1) {
-            val x1 = i.toFloat(); val x2 = x1 + 1f
-            val z1 = -j.toFloat(); val z2 = z1 - 1f
 
+        for (j in 0..xUnits-1) {
+
+            // FIXME: Corners may fail
+            var magnitude0 = type.magnitude
+            var magnitude1 = type.magnitude
+            var magnitude2 = type.magnitude
+            var magnitude3 = type.magnitude
+
+            if (i == 0 && west != null) {
+                magnitude0 = west.type.magnitude
+                magnitude3 = west.type.magnitude
+            } else if (i == zUnits-1 && east != null) {
+                magnitude1 = east.type.magnitude
+                magnitude2 = east.type.magnitude
+            }
+            if (j == xUnits-1 && north != null) {
+                magnitude2 = north.type.magnitude
+                magnitude3 = north.type.magnitude
+            } else if (j == 0 && south != null) {
+                magnitude0 = south.type.magnitude
+                magnitude1 = south.type.magnitude
+            }
+
+            val x0 = i.toFloat(); val x1 = x0 + 1f
+            val z0 = -j.toFloat(); val z1 = z0 - 1f
+
+            val x0Mod = x0 * density + t.x
             val x1Mod = x1 * density + t.x
-            val x2Mod = x2 * density + t.x
+            val z0Mod = z0 * density + t.z
             val z1Mod = z1 * density + t.z
-            val z2Mod = z2 * density + t.z
 
             // Calculate height with perlin noise
-            val y1 = 0//STBPerlin.stb_perlin_noise3(x1Mod, yPlane, z1Mod, 0, 0, 0) * magnitude
-            val y2 = 0//STBPerlin.stb_perlin_noise3(x2Mod, yPlane, z1Mod, 0, 0, 0) * magnitude
-            val y3 = 0//STBPerlin.stb_perlin_noise3(x2Mod, yPlane, z2Mod, 0, 0, 0) * magnitude
-            val y4 = 0//STBPerlin.stb_perlin_noise3(x1Mod, yPlane, z2Mod, 0, 0, 0) * magnitude
+            val y0 = STBPerlin.stb_perlin_noise3(x0Mod, yPlane, z0Mod, 0, 0, 0) * magnitude0
+            val y1 = STBPerlin.stb_perlin_noise3(x1Mod, yPlane, z0Mod, 0, 0, 0) * magnitude1
+            val y2 = STBPerlin.stb_perlin_noise3(x1Mod, yPlane, z1Mod, 0, 0, 0) * magnitude2
+            val y3 = STBPerlin.stb_perlin_noise3(x0Mod, yPlane, z1Mod, 0, 0, 0) * magnitude3
 
             // Creatte vertices
-            vertices[vx] = Vertex(Vector3f(x1, yPlane - y1, z1), Vector2f(u1, v1), color)
-            vertices[vx+1] = Vertex(Vector3f(x2, yPlane - y2, z1), Vector2f(u2, v1), color)
-            vertices[vx+2] = Vertex(Vector3f(x2, yPlane - y3, z2), Vector2f(u2, v2), color)
-            vertices[vx+3] = Vertex(Vector3f(x1, yPlane - y4, z2), Vector2f(u1, v2), color)
+            vertices[vx] = Vertex(Vector3f(x0, yPlane - y0, z0), Vector2f(u1, v1), color)
+            vertices[vx+1] = Vertex(Vector3f(x1, yPlane - y1, z0), Vector2f(u2, v1), color)
+            vertices[vx+2] = Vertex(Vector3f(x1, yPlane - y2, z1), Vector2f(u2, v2), color)
+            vertices[vx+3] = Vertex(Vector3f(x0, yPlane - y3, z1), Vector2f(u1, v2), color)
 
             // Add indices
             indices[ix++] = (vx).toShort()
             indices[ix++] = (vx + 1).toShort()
             indices[ix++] = (vx + 2).toShort()
-            indices[ix++] = (vx).toShort()
             indices[ix++] = (vx + 2).toShort()
             indices[ix++] = (vx + 3).toShort()
+            indices[ix++] = (vx + 0).toShort()
             vx += 4
         }
     }
