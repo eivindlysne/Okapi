@@ -1,5 +1,6 @@
 package me.lysne.okapi
 
+import me.lysne.okapi.generation.createTextureMesh
 import me.lysne.okapi.graphics.*
 import me.lysne.okapi.window.Input
 import me.lysne.okapi.window.Window
@@ -271,4 +272,6 @@ fun main(args: Array<String>) {
     System.setProperty("org.lwjgl.librarypath", File("lib/lwjgl/native").getAbsolutePath())
     val okapi = Okapi()
     okapi.run()
+//    TreeGenerator.timeGenerateConvexHull(80)
+//    TreeGenerator.timeGenerateIcoSphere(1)
 }

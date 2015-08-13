@@ -1,0 +1,13 @@
+
+## Terrain
+* Perlin noise (stb) heightmap
+* Voronoi stuff
+* Diamond-square
+
+## Trees
+* L-systems
+* Quickhull (Using for top)
+    * Inefficient?
+* Icosphere with deform pass
+* Space colonization
+* Idea: Using multiple quickhull blobs and create trunk with spacecol?

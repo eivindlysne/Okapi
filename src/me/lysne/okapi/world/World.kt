@@ -18,6 +18,7 @@ public class World {
     val pointLights: ArrayList<PointLight>
     var currentRegion: Region
 
+
     init {
         regions = HashMap()
         pointLights = ArrayList()

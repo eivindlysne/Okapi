@@ -1,6 +1,7 @@
 package me.lysne.okapi.world
 
 import me.lysne.okapi.Config
+import me.lysne.okapi.generation.createRegionMeshData
 import me.lysne.okapi.graphics.*
 import org.joml.Vector2f
 import org.joml.Vector3f
@@ -23,6 +24,8 @@ public class Region(val worldX: Int, val worldZ: Int, val world: World) {
 
     private val mesh: Mesh
     private val transform: Transform
+
+    private val tree: Tree
 
     val type: Type
 
@@ -50,7 +53,7 @@ public class Region(val worldX: Int, val worldZ: Int, val world: World) {
                 -1f,
                 type.color,
                 transform)
-        generateNormals(data)
+        data.generateNormals()
         mesh = Mesh(data.vertices, data.indices)
 
         if (Config.Debug) {
@@ -62,6 +65,8 @@ public class Region(val worldX: Int, val worldZ: Int, val world: World) {
                 100f,
                 Vector3f(worldX * REGION_SIZE_X.toFloat(), 4f, worldZ * REGION_SIZE_Z.toFloat()),
                 Attenuation()))
+
+        tree = Tree()
     }
 
 
@@ -72,6 +77,8 @@ public class Region(val worldX: Int, val worldZ: Int, val world: World) {
         shader.setUniform("transform.scale", transform.scale)
 
         mesh.draw()
+
+        tree.draw()
     }
 
     fun drawDebugMesh(shader: Shader?) {
@@ -89,6 +96,7 @@ public class Region(val worldX: Int, val worldZ: Int, val world: World) {
 
     fun destroy() {
         mesh.destroy()
+        tree.destroy()
         debugMesh?.destroy()
     }
 }

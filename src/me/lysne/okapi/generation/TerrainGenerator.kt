@@ -1,33 +1,39 @@
-package me.lysne.okapi.graphics
+package me.lysne.okapi.generation
 
+import me.lysne.okapi.graphics.Mesh
+import me.lysne.okapi.graphics.TextureMesh
+import me.lysne.okapi.graphics.Transform
+import me.lysne.okapi.graphics.Vertex
 import me.lysne.okapi.world.Region
 import org.joml.Vector2f
 import org.joml.Vector3f
 import org.lwjgl.stb.STBPerlin
 
 
-public data class MeshData(val vertices: Array<Vertex>, val indices: ShortArray)
+public class MeshData(val vertices: Array<Vertex>, val indices: ShortArray) {
+    public fun generateNormals() {
 
+        for (i in 0..indices.size()-1 step 3) {
 
-// TODO: Should maybe be in Mesh?
-public fun generateNormals(data: MeshData) {
+            val v0 = vertices[indices[i].toInt()]
+            val v1 = vertices[indices[i + 1].toInt()]
+            val v2 = vertices[indices[i + 2].toInt()]
 
-    for (i in 0..data.indices.size()-1 step 3) {
+            val a = Vector3f(v1.position).sub(v0.position)
+            val b = Vector3f(v2.position).sub(v1.position)
 
-        val v0 = data.vertices[data.indices[i].toInt()]
-        val v1 = data.vertices[data.indices[i + 1].toInt()]
-        val v2 = data.vertices[data.indices[i + 2].toInt()]
+            val normal = Vector3f(a).cross(b).normalize()
 
-        val a = Vector3f(v1.position).sub(v0.position)
-        val b = Vector3f(v2.position).sub(v1.position)
-
-        val normal = Vector3f(a).cross(b).normalize()
-
-        v0.normal.add(normal)
-        v1.normal.add(normal)
-        v2.normal.add(normal)
+            v0.normal.add(normal)
+            v1.normal.add(normal)
+            v2.normal.add(normal)
+        }
+        vertices.forEach { v -> v.normal.normalize() }
     }
-    data.vertices.forEach { v -> v.normal.normalize() }
+
+    public fun toMesh() : Mesh {
+        return Mesh(vertices, indices)
+    }
 }
 
 
@@ -115,7 +121,7 @@ public fun createRegionMeshData(
 }
 
 public fun createTiledPlane(xUnits: Int, zUnits: Int, plane: Float, color: Vector3f = Vector3f(1f, 1f, 1f)) : Mesh {
-    val vertices: Array<Vertex> = Array(xUnits * zUnits * 4, {x -> Vertex()})
+    val vertices: Array<Vertex> = Array(xUnits * zUnits * 4, {x -> Vertex() })
     val indices = ShortArray(xUnits * zUnits * 6)
 
     var vx = 0; var ix = 0
@@ -144,7 +150,7 @@ public fun createPerlinPlane(xUnits: Int, zUnits: Int, plane: Float) : Mesh {
 
      val offset = .5f
 
-    val vertices = Array((xUnits + 1) * (zUnits + 1), {x -> Vertex()})
+    val vertices = Array((xUnits + 1) * (zUnits + 1), {x -> Vertex() })
     val indices = ShortArray(xUnits * zUnits * 6)
 
     var idx = 0
@@ -187,7 +193,7 @@ public fun createTiledPerlinPlane(xUnits: Int, zUnits: Int, plane: Float, color:
     val offset = 0.3f
     val smooth = 2.0f
 
-    val vertices: Array<Vertex> = Array(xUnits * zUnits * 4, {x -> Vertex()})
+    val vertices: Array<Vertex> = Array(xUnits * zUnits * 4, {x -> Vertex() })
     val indices = ShortArray(xUnits * zUnits * 6)
 
     var vx = 0; var ix = 0

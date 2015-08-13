@@ -98,4 +98,10 @@ public class Mesh(val vertices: Array<Vertex>, val indices: ShortArray) {
         GL11.glDrawElements(GL11.GL_TRIANGLES, drawCount, GL11.GL_UNSIGNED_SHORT, 0L)
         GL30.glBindVertexArray(0)
     }
+
+    public fun drawTriangleStrip() {
+        GL30.glBindVertexArray(vao)
+        GL11.glDrawElements(GL11.GL_POINTS, drawCount, GL11.GL_UNSIGNED_SHORT, 0L)
+        GL30.glBindVertexArray(0)
+    }
 }
