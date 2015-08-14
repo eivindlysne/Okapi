@@ -43,8 +43,8 @@ public class Shader(vertexShaderPath: String, fragmentShaderPath: String) {
         GL20.glAttachShader(program, vertexShader)
         GL20.glAttachShader(program, fragmentShader)
         GL20.glLinkProgram(program)
-        GL20.glValidateProgram(program)
         checkProgramLog(program, GL20.GL_LINK_STATUS)
+        GL20.glValidateProgram(program)
         checkProgramLog(program, GL20.GL_VALIDATE_STATUS)
     }
 
@@ -123,6 +123,18 @@ public class Shader(vertexShaderPath: String, fragmentShaderPath: String) {
         val fb = BufferUtils.createFloatBuffer(16)
         m.get(fb)
         GL20.glUniformMatrix4fv(uniformLocations[name], false, fb)
+    }
+
+    public fun setUniform(name: String, a: Array<Vector3f>) {
+
+        use()
+        a.forEachIndexed { i, v ->
+            val fb = BufferUtils.createFloatBuffer(3)
+            v.get(fb)
+            GL20.glUniform3fv(
+                    GL20.glGetUniformLocation(program, name + "[$i]"),
+                    fb)
+        }
     }
 
     private fun checkShaderLog(handle: Int, flag: Int) {

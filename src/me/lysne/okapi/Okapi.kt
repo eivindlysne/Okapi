@@ -2,11 +2,14 @@ package me.lysne.okapi
 
 import me.lysne.okapi.generation.createTextureMesh
 import me.lysne.okapi.graphics.*
+import me.lysne.okapi.pipeline.Geometry
+import me.lysne.okapi.pipeline.Lighting
+import me.lysne.okapi.pipeline.SSAO
+import me.lysne.okapi.pipeline.Skybox
 import me.lysne.okapi.window.Input
 import me.lysne.okapi.window.Window
 import me.lysne.okapi.window.getTime
 import me.lysne.okapi.world.World
-import org.joml.Matrix4f
 import org.joml.Vector2f
 import org.joml.Vector3f
 import java.io.File
@@ -21,15 +24,20 @@ public class Okapi {
     private val skybox: Skybox
     private val world: World
 
+    // Pipeline
+    private val geometryPass: Geometry
+    private val ssaoPass: SSAO
+    private val lightingPass: Lighting
+
     // Framebuffers
     private val screenMesh: TextureMesh
     private val smallMesh: TextureMesh
     private val lightFramebuffer: Framebuffer
-    private val gBuffer: GBuffer
+//    private val gBuffer: GBuffer
 
     // Shaders
-    private val defaultShader: Shader
-    private val geometryPassShader: Shader
+//    private val defaultShader: Shader
+//    private val geometryPassShader: Shader
     private val texturePassShader: Shader
     private val pointLightShader: Shader
     private val textShader: Shader
@@ -51,32 +59,26 @@ public class Okapi {
         camera = Camera(Camera.ProjectionType.PERSPECTIVE, Vector3f(0f, 0f, 0f))
 
         skybox = Skybox("m_negz.png", "m_posz.png",
-                        "m_posy.png", "m_negy.png",
-                        "m_negx.png", "m_posx.png")
+                "m_posy.png", "m_negy.png",
+                "m_negx.png", "m_posx.png")
 
         world = World()
 
-        gBuffer = GBuffer()
+        geometryPass = Geometry()
+        ssaoPass = SSAO()
+        lightingPass = Lighting()
+
+        //        gBuffer = GBuffer()
         screenMesh = createTextureMesh(-1f, -1f, 1f, 1f)
         smallMesh = createTextureMesh(1f - (1f / 2f), 1f - (1f / 2f), 1f, 1f)
         lightFramebuffer = Framebuffer(Framebuffer.Attachment.ColorAndDepth)
 
-        defaultShader = Shader("basic.vert.glsl", "basic.frag.glsl")
-        defaultShader.registerUniforms(
-                "diffuse0", "diffuse1",
-                "viewProjection",
-                "cameraPosition",
-                "transform.position", "transform.orientation", "transform.scale",
-                "pointLight.position", "pointLight.intensity",
-                "pointLight.attenuation.constant", "pointLight.attenuation.linear", "pointLight.attenuation.quadratic")
-        defaultShader.setUniform("diffuse0", 0)
-
-        geometryPassShader = Shader("geometryPass.vert.glsl", "geometryPass.frag.glsl")
-        geometryPassShader.registerUniforms(
-                "diffuse0",
-                "viewProjection",
-                "transform.position", "transform.orientation", "transform.scale")
-        geometryPassShader.setUniform("diffuse0", 0)
+//        geometryPassShader = Shader("geometryPass.vert.glsl", "geometryPass.frag.glsl")
+//        geometryPassShader.registerUniforms(
+//                "diffuse0",
+//                "viewProjection", "invProjection",
+//                "transform.position", "transform.orientation", "transform.scale")
+//        geometryPassShader.setUniform("diffuse0", 0)
 
         texturePassShader = Shader("texturePass.vert.glsl", "texturePass.frag.glsl")
         texturePassShader.registerUniforms("scaleFactor", "texture0")
@@ -84,7 +86,7 @@ public class Okapi {
 
         pointLightShader = Shader("genericLightPass.vert.glsl", "pointLightPass.frag.glsl")
         pointLightShader.registerUniforms(
-                "diffuse", "specular", "normal", "depth",
+                "diffuse", "specular", "normal", "depth", "ssao",
                 "invViewProjection",
                 "light.color", "light.intensity", "light.position", "light.range",
                 "light.attenuation.constant", "light.attenuation.linear", "light.attenuation.quadratic")
@@ -92,6 +94,7 @@ public class Okapi {
 //        pointLightShader.setUniform("specular", 1)
         pointLightShader.setUniform("normal", 2)
         pointLightShader.setUniform("depth", 3)
+        pointLightShader.setUniform("ssao", 4)
 
         textShader = Shader("text.vert.glsl", "text.frag.glsl")
         textShader.registerUniforms("viewProjection", "font")
@@ -170,51 +173,58 @@ public class Okapi {
     private fun render(alpha: Double) {
 
         // Geometry pass
-        gBuffer.bind()
-            window.clear()
-
-//            skybox.draw(camera.viewProjectionMatrix)
-
-            geometryPassShader.use()
-            geometryPassShader.setUniform("viewProjection", camera.viewProjectionMatrix)
-
-            whiteTexture.bind(0)
-
-            // Draw World
-            world.drawGeometry(geometryPassShader)
-        gBuffer.unbind()
-
-        // TODO: Temp lighting
-//        window.clear()
+//        gBuffer.bind()
+//            window.clear()
 //
-//        skybox.draw(camera.viewProjectionMatrix)
+////            skybox.draw(camera.viewProjectionMatrix)
 //
-//        defaultShader.use()
+//            geometryPassShader.use()
+//            geometryPassShader.setUniform("viewProjection", camera.viewMatrix)
+//            geometryPassShader.setUniform("invProjection", Matrix4f(camera.projectionMatrix).invert())
 //
-//        defaultShader.setUniform("viewProjection", camera.viewProjectionMatrix)
-//        defaultShader.setUniform("cameraPosition", camera.transform.position)
+//            whiteTexture.bind(0)
 //
-//        terrainTexture.bind(0)
-//
-//        world.draw(defaultShader)
+//            // Draw World
+//            world.drawGeometry(geometryPassShader)
+//        gBuffer.unbind()
 
         // Debug pass
         if (Config.DebugRender)
             renderDebug()
 
-        // Lighting
-        lightFramebuffer.bind()
-            window.clear()
-            pointLightShader.use()
-            pointLightShader.setUniform("invViewProjection", Matrix4f(camera.viewProjectionMatrix).invert())
-            gBuffer.bindTextures()
-            world.drawLights(pointLightShader, screenMesh)
-        lightFramebuffer.unbind()
+        // SSAO
+//        ssao.ssaoFB.bind()
+//            window.clear()
+//            ssao.ssaoShader.use()
+//            ssao.ssaoShader.setUniform("projection", camera.projectionMatrix)
+//            ssao.bindTextures(gBuffer)
+//            screenMesh.draw()
+//        ssao.ssaoFB.unbind()
+
+
+//        // Lighting
+//        lightFramebuffer.bind()
+//            window.clear()
+//            pointLightShader.use()
+//            pointLightShader.setUniform("invViewProjection", Matrix4f(camera.viewProjectionMatrix).invert())
+//            gBuffer.bindTextures()
+//            ssao.ssaoFB.bindTexture(4, Framebuffer.Attachment.Color)
+//            world.drawLights(pointLightShader, screenMesh)
+//        lightFramebuffer.unbind()
+
+        geometryPass.render(window, camera, whiteTexture, world)
+        ssaoPass.render(window, camera, geometryPass.gBuffer, screenMesh)
+        lightingPass.render(window, geometryPass.gBuffer, ssaoPass.ssaoFB, screenMesh)
 
         // Texture pass
         window.clear()
         texturePassShader.use()
-        lightFramebuffer.bindTexture(0, Framebuffer.Attachment.Color)
+//        ssao.ssaoFB.bindTexture(0, Framebuffer.Attachment.Color)
+//        lightFramebuffer.bindTexture(0, Framebuffer.Attachment.Color)
+//        ssaoPass.ssaoFB.bindTexture(0, Framebuffer.Attachment.Color)
+//        GL13.glActiveTexture(GL13.GL_TEXTURE0)
+//        GL11.glBindTexture(GL11.GL_TEXTURE_2D, geometryPass.gBuffer.gAlbedoSpec)
+        lightingPass.lightingFB.bindTexture(0, Framebuffer.Attachment.Color)
         screenMesh.draw()
 
         // Skybox pass use stencil buffer?
@@ -245,13 +255,14 @@ public class Okapi {
         window.destroy()
         world.destroy()
 
+        geometryPass.destroy()
+        ssaoPass.destroy()
+        lightingPass.destroy()
+
         screenMesh.destroy()
         smallMesh.destroy()
         lightFramebuffer.destroy()
-        gBuffer.destroy()
 
-        defaultShader.destroy()
-        geometryPassShader.destroy()
         texturePassShader.destroy()
         pointLightShader.destroy()
         textShader.destroy()
@@ -272,6 +283,4 @@ fun main(args: Array<String>) {
     System.setProperty("org.lwjgl.librarypath", File("lib/lwjgl/native").getAbsolutePath())
     val okapi = Okapi()
     okapi.run()
-//    TreeGenerator.timeGenerateConvexHull(80)
-//    TreeGenerator.timeGenerateIcoSphere(1)
 }

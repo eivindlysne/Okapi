@@ -72,9 +72,7 @@ public class Region(val worldX: Int, val worldZ: Int, val world: World) {
 
     fun draw(shader: Shader) {
 
-        shader.setUniform("transform.position", transform.position)
-        shader.setUniform("transform.orientation", transform.orientation)
-        shader.setUniform("transform.scale", transform.scale)
+        shader.setUniform("model", transform.transformMatrix4f())
 
         mesh.draw()
 
@@ -84,8 +82,6 @@ public class Region(val worldX: Int, val worldZ: Int, val world: World) {
     fun drawDebugMesh(shader: Shader?) {
 
         shader?.setUniform("transform.position", transform.position)
-        shader?.setUniform("transform.orientation", transform.orientation)
-        shader?.setUniform("transform.scale", transform.scale)
 
         debugMesh?.draw()
     }

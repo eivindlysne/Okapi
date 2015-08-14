@@ -1,5 +1,8 @@
-package me.lysne.okapi.graphics
+package me.lysne.okapi.pipeline
 
+import me.lysne.okapi.graphics.Camera
+import me.lysne.okapi.graphics.Shader
+import me.lysne.okapi.graphics.Transform
 import me.lysne.okapi.loadImage
 import org.joml.Matrix4f
 import org.joml.Vector3f
@@ -83,12 +86,12 @@ public class Skybox(
         GL11.glTexParameteri(GL13.GL_TEXTURE_CUBE_MAP, GL11.GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE)
 
         val targets = arrayOf(
-            GL13.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z,
-            GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_Z,
-            GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_Y,
-            GL13.GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
-            GL13.GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
-            GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_X
+                GL13.GL_TEXTURE_CUBE_MAP_NEGATIVE_Z,
+                GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_Z,
+                GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_Y,
+                GL13.GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
+                GL13.GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
+                GL13.GL_TEXTURE_CUBE_MAP_POSITIVE_X
         )
 
         for (i in 0..(targets.size() - 1)) {
@@ -113,25 +116,25 @@ public class Skybox(
         val p = 10.0f
 
         val vertices = arrayOf(
-                Vector3f(-p, -p,  p), Vector3f(-p,  p,  p), Vector3f( p,  p,  p),
-                Vector3f( p,  p,  p), Vector3f( p, -p,  p), Vector3f(-p, -p,  p),
+                Vector3f(-p, -p, p), Vector3f(-p, p, p), Vector3f(p, p, p),
+                Vector3f(p, p, p), Vector3f(p, -p, p), Vector3f(-p, -p, p),
 
-                Vector3f( p,  p, -p), Vector3f(-p,  p, -p), Vector3f(-p, -p, -p),
-                Vector3f(-p, -p, -p), Vector3f( p, -p, -p), Vector3f( p,  p, -p),
-
-
-                Vector3f(-p,  p, -p), Vector3f( p,  p, -p), Vector3f( p,  p,  p),
-                Vector3f( p,  p,  p), Vector3f(-p,  p,  p), Vector3f(-p,  p, -p),
-
-                Vector3f( p, -p,  p), Vector3f( p, -p, -p), Vector3f(-p, -p, -p),
-                Vector3f(-p, -p, -p), Vector3f(-p, -p,  p), Vector3f( p, -p,  p),
+                Vector3f(p, p, -p), Vector3f(-p, p, -p), Vector3f(-p, -p, -p),
+                Vector3f(-p, -p, -p), Vector3f(p, -p, -p), Vector3f(p, p, -p),
 
 
-                Vector3f(-p,  p, -p), Vector3f(-p,  p,  p), Vector3f(-p, -p,  p),
-                Vector3f(-p, -p,  p), Vector3f(-p, -p, -p), Vector3f(-p,  p, -p),
+                Vector3f(-p, p, -p), Vector3f(p, p, -p), Vector3f(p, p, p),
+                Vector3f(p, p, p), Vector3f(-p, p, p), Vector3f(-p, p, -p),
 
-                Vector3f( p, -p, -p), Vector3f( p, -p,  p), Vector3f( p,  p,  p),
-                Vector3f( p,  p,  p), Vector3f( p,  p, -p), Vector3f( p, -p, -p)
+                Vector3f(p, -p, p), Vector3f(p, -p, -p), Vector3f(-p, -p, -p),
+                Vector3f(-p, -p, -p), Vector3f(-p, -p, p), Vector3f(p, -p, p),
+
+
+                Vector3f(-p, p, -p), Vector3f(-p, p, p), Vector3f(-p, -p, p),
+                Vector3f(-p, -p, p), Vector3f(-p, -p, -p), Vector3f(-p, p, -p),
+
+                Vector3f(p, -p, -p), Vector3f(p, -p, p), Vector3f(p, p, p),
+                Vector3f(p, p, p), Vector3f(p, p, -p), Vector3f(p, -p, -p)
         )
         val buffer = BufferUtils.createFloatBuffer(vertices.size() * 3)
         for (v in vertices) {

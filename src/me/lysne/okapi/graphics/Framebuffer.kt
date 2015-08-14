@@ -51,12 +51,12 @@ public class Framebuffer(
             GL11.glTexImage2D(
                     GL11.GL_TEXTURE_2D,
                     0,
-                    GL11.GL_RGB,
+                    GL11.GL_RGBA,
                     width,
                     height,
                     0,
-                    GL11.GL_RGB,
-                    GL11.GL_UNSIGNED_BYTE,
+                    GL11.GL_RGBA,
+                    GL11.GL_FLOAT,
                     MemoryUtil.NULL)
 
             GL30.glFramebufferTexture2D(
@@ -98,8 +98,7 @@ public class Framebuffer(
         val drawBuffer = BufferUtils.createIntBuffer(1)
         if (attachment == Attachment.Color || attachment == Attachment.ColorAndDepth)
             drawBuffer.put(GL30.GL_COLOR_ATTACHMENT0)
-//        if (attachment == Attachment.Depth || attachment == Attachment.ColorAndDepth)
-//            drawBuffer.put(GL30.GL_DEPTH_ATTACHMENT)
+
         drawBuffer.flip()
         GL20.glDrawBuffers(drawBuffer)
 

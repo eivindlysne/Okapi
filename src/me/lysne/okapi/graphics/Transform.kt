@@ -104,12 +104,8 @@ public class Transform {
         val mOrientation = Matrix4f().identity()
         val mScale = Matrix4f().identity()
 
-        return mPosition.translate(
-                position
-        ).mul(
-                mOrientation.rotation(orientation)
-        ).mul(
-                mScale.scale(scale)
-        )
+        return mPosition.translate(position)
+                .mul(mOrientation.rotation(orientation))
+                .mul(mScale.scale(scale))
     }
 }

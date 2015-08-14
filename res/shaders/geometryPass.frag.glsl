@@ -1,45 +1,32 @@
 #version 130
 
-struct Transform {
-    vec3 position;
-    vec4 orientation;
-    vec3 scale;
-};
+out vec4 gPositionDepth;
+out vec3 gNormal;
+out vec4 gAlbedoSpec;
 
-vec3 quaternion_rotate(vec4 q, vec3 v) {
-    return v + 2.0 * cross(cross(v, q.xyz) + q.w * v, q.xyz);
-}
-
-struct Material {
-    sampler2D diffuseMap;
-    vec4 diffuseColor;
-    vec4 specularColor;
-    float specularExponent;
-};
-
-
-uniform Transform transform;
-
-uniform sampler2D diffuse0;
-
-in vec3 vPosition;
+in vec3 vFragPosition;
 in vec2 vTexCoord;
 in vec3 vColor;
 in vec3 vNormal;
-in vec3 vWordSpacePosition;
 
-out vec4 gDiffuseColor;
-out vec4 gSpecularColor;
-out vec4 gNormals;
+uniform sampler2D diffuseTex;
+
+const float NEAR = 0.01; // projection matrix's near plane
+const float FAR = 256.0f; // projection matrix's far plane
+float linearize_depth(float depth) {
+    float z = depth * 2.0 - 1.0; // Back to NDC
+    return (2.0 * NEAR * FAR) / (FAR + NEAR - z * (FAR - NEAR));
+}
 
 void main(void) {
 
-    vec4 diffuseColor = texture2D(diffuse0, vTexCoord);
-    vec3 surfaceColor = diffuseColor.rgb * vColor;
+    gPositionDepth.xyz = vFragPosition;
+    gPositionDepth.a = linearize_depth(gl_FragCoord.z);
 
-    vec3 normal = normalize(quaternion_rotate(transform.orientation, vNormal));
+    gNormal = normalize(vNormal);
 
-    gDiffuseColor = vec4(surfaceColor, 1.0);
-    gSpecularColor = vec4(1, 1, 1, 1.0 / 4.0); // TODO: Materials 4.0==specularExponent
-    gNormals = vec4(0.5 * (normal + vec3(1.0)), 1.0);
+    // Specular can be stored in gAlbedoSpec.a
+    gAlbedoSpec.rgb = texture2D(diffuseTex, vTexCoord).rgb * vColor;
+    gAlbedoSpec.a = 1.0;
+    //gAlbedoSpec.rgb = vec3(0.95);
 }

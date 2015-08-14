@@ -11,9 +11,9 @@ public class Tree {
 
     init {
 //        trunkMesh = TreeGenerator.generateIcoSphere(Vector3f(.54f, .32f, .18f))
-    //    crownMesh = TreeGenerator.generateIcosahedron(Vector3f(1f, .31f, 0f), 4f)
+        crownMesh = TreeGenerator.generateIcosahedron(Vector3f(1f, .31f, 0f), 4f)
 //        crownMesh = TreeGenerator.generateIcoSphere(Vector3f(.2f, .4f, 0f))
-        crownMesh = TreeGenerator.generateConvexHull(10, 4f, Vector3f(.2f, .4f, 0f), Vector3f(1f,2.5f,1f))
+//        crownMesh = TreeGenerator.generateConvexHull(10, 4f, Vector3f(.2f, .4f, 0f), Vector3f(1f,2.5f,1f))
     }
 
     public fun draw() {

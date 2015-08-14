@@ -18,6 +18,7 @@ uniform sampler2D diffuse;
 uniform sampler2D specular;
 uniform sampler2D normal;
 uniform sampler2D depth;
+uniform sampler2D ssao;
 
 uniform mat4 invViewProjection;
 
@@ -74,6 +75,9 @@ void main(void) {
     vec3 encodedNormal = texture2D(normal, vTexCoord).rgb;
     float depthValue = texture2D(depth, vTexCoord).r;
 
+    float ao = texture2D(ssao, vTexCoord).r;
+    vec3 ambient = vec3(0.3 * ao);
+
     vec3 position = worldSpacePosition(depthValue);
     vec3 decodedNormal = normalize(2.0 * encodedNormal - vec3(1.0));
 
@@ -81,5 +85,5 @@ void main(void) {
     float lightDistance = length(light.position - position);
     vec4 lightColor = calculatePointLight(surfaceToLight, lightDistance, decodedNormal);
 
-    fragColor = vec4(lightColor.rgb * diffuseColor, lightColor.a);
+    fragColor = vec4(ambient + (lightColor.rgb * diffuseColor), lightColor.a);
 }
