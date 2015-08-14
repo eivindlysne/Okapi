@@ -33,7 +33,7 @@ public class Camera(
 
     val transform: Transform
     val fov = Math.toRadians(70.0).toFloat()
-    val zNear = 0.01f
+    val zNear = 0.1f
     val zFar = 256f
     val ascpectRatio = 16f / 9f
 

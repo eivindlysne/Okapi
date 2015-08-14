@@ -4,14 +4,14 @@ uniform sampler2D gPositionDepth;
 uniform sampler2D gNormal;
 uniform sampler2D noiseTex;
 
-uniform vec3 samples[64];
+uniform vec3 samples[128];
 
 uniform mat4 projection;
 
 // FIXME: Hardcoded screen dimensions
 const vec2 noiseScale = vec2(960.0/4.0, 540.0/4.0);
-int kernelSize = 64;
-float radius = 1.0;
+int kernelSize = 128;
+float radius = 2.0;
 
 in vec2 vTexCoord;
 
@@ -50,5 +50,4 @@ void main(void) {
     occlusion = 1.0 - (occlusion / kernelSize);
 
     fragColor = occlusion;
-    //fragColor = vec4(occlusion, occlusion, occlusion, 1.0);
 }

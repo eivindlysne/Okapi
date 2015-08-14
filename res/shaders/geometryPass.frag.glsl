@@ -11,10 +11,10 @@ in vec3 vNormal;
 
 uniform sampler2D diffuseTex;
 
-const float NEAR = 0.01; // projection matrix's near plane
-const float FAR = 256.0f; // projection matrix's far plane
+const float NEAR = 0.1;
+const float FAR = 256.0;
 float linearize_depth(float depth) {
-    float z = depth * 2.0 - 1.0; // Back to NDC
+    float z = depth * 2.0 - 1.0;
     return (2.0 * NEAR * FAR) / (FAR + NEAR - z * (FAR - NEAR));
 }
 
@@ -28,5 +28,5 @@ void main(void) {
     // Specular can be stored in gAlbedoSpec.a
     gAlbedoSpec.rgb = texture2D(diffuseTex, vTexCoord).rgb * vColor;
     gAlbedoSpec.a = 1.0;
-    //gAlbedoSpec.rgb = vec3(0.95);
+    //gAlbedoSpec.rgba = vec4(0.95);
 }

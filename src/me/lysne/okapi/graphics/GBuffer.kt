@@ -123,17 +123,4 @@ public class GBuffer(
         GL11.glFlush()
         GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0)
     }
-
-//    public fun bindTextures() {
-//        GL13.glActiveTexture(GL13.GL_TEXTURE0)
-//        GL11.glBindTexture(GL11.GL_TEXTURE_2D, diffuse)
-//        GL13.glActiveTexture(GL13.GL_TEXTURE1)
-//        GL11.glBindTexture(GL11.GL_TEXTURE_2D, specular)
-//        GL13.glActiveTexture(GL13.GL_TEXTURE2)
-//        GL11.glBindTexture(GL11.GL_TEXTURE_2D, normals)
-//        GL13.glActiveTexture(GL13.GL_TEXTURE3)
-//        GL11.glBindTexture(GL11.GL_TEXTURE_2D, depth)
-//        GL13.glActiveTexture(GL13.GL_TEXTURE4)
-//        GL11.glBindTexture(GL11.GL_TEXTURE_2D, positions)
-//    }
 }

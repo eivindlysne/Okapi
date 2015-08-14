@@ -12,6 +12,8 @@ import me.lysne.okapi.window.getTime
 import me.lysne.okapi.world.World
 import org.joml.Vector2f
 import org.joml.Vector3f
+import org.lwjgl.opengl.GL11
+import org.lwjgl.opengl.GL13
 import java.io.File
 
 
@@ -172,60 +174,26 @@ public class Okapi {
 
     private fun render(alpha: Double) {
 
-        // Geometry pass
-//        gBuffer.bind()
-//            window.clear()
-//
-////            skybox.draw(camera.viewProjectionMatrix)
-//
-//            geometryPassShader.use()
-//            geometryPassShader.setUniform("viewProjection", camera.viewMatrix)
-//            geometryPassShader.setUniform("invProjection", Matrix4f(camera.projectionMatrix).invert())
-//
-//            whiteTexture.bind(0)
-//
-//            // Draw World
-//            world.drawGeometry(geometryPassShader)
-//        gBuffer.unbind()
 
-        // Debug pass
-        if (Config.DebugRender)
-            renderDebug()
+//        // Debug pass
+//        if (Config.DebugRender)
+//            renderDebug()
 
-        // SSAO
-//        ssao.ssaoFB.bind()
-//            window.clear()
-//            ssao.ssaoShader.use()
-//            ssao.ssaoShader.setUniform("projection", camera.projectionMatrix)
-//            ssao.bindTextures(gBuffer)
-//            screenMesh.draw()
-//        ssao.ssaoFB.unbind()
-
-
-//        // Lighting
-//        lightFramebuffer.bind()
-//            window.clear()
-//            pointLightShader.use()
-//            pointLightShader.setUniform("invViewProjection", Matrix4f(camera.viewProjectionMatrix).invert())
-//            gBuffer.bindTextures()
-//            ssao.ssaoFB.bindTexture(4, Framebuffer.Attachment.Color)
-//            world.drawLights(pointLightShader, screenMesh)
-//        lightFramebuffer.unbind()
 
         geometryPass.render(window, camera, whiteTexture, world)
         ssaoPass.render(window, camera, geometryPass.gBuffer, screenMesh)
-        lightingPass.render(window, geometryPass.gBuffer, ssaoPass.ssaoFB, screenMesh)
+        lightingPass.render(window, geometryPass.gBuffer, ssaoPass.blurFB, screenMesh)
 
         // Texture pass
         window.clear()
         texturePassShader.use()
-//        ssao.ssaoFB.bindTexture(0, Framebuffer.Attachment.Color)
-//        lightFramebuffer.bindTexture(0, Framebuffer.Attachment.Color)
-//        ssaoPass.ssaoFB.bindTexture(0, Framebuffer.Attachment.Color)
-//        GL13.glActiveTexture(GL13.GL_TEXTURE0)
-//        GL11.glBindTexture(GL11.GL_TEXTURE_2D, geometryPass.gBuffer.gAlbedoSpec)
+
         lightingPass.lightingFB.bindTexture(0, Framebuffer.Attachment.Color)
         screenMesh.draw()
+
+        GL13.glActiveTexture(GL13.GL_TEXTURE0)
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, geometryPass.gBuffer.gAlbedoSpec)
+        smallMesh.draw()
 
         // Skybox pass use stencil buffer?
         // FIXME: Not working

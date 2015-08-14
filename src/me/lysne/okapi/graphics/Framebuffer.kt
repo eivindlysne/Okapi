@@ -51,11 +51,11 @@ public class Framebuffer(
             GL11.glTexImage2D(
                     GL11.GL_TEXTURE_2D,
                     0,
-                    GL11.GL_RGBA,
+                    GL11.GL_RGB,
                     width,
                     height,
                     0,
-                    GL11.GL_RGBA,
+                    GL11.GL_RGB,
                     GL11.GL_FLOAT,
                     MemoryUtil.NULL)
 

@@ -17,7 +17,7 @@ public class SSAO {
     val blurFB: Framebuffer
 
     val ssaoShader: Shader
-//    val ssaoBlurShader: Shader
+    val blurShader: Shader
 
     val noiseTexture: Int
 
@@ -36,16 +36,17 @@ public class SSAO {
         ssaoShader.setUniform("gNormal", 1)
         ssaoShader.setUniform("noiseTex", 2)
         ssaoShader.setUniform("samples", generateKernel())
-//
-//        ssaoBlurShader = Shader("genericLightPass.vert.glsl", "ssaoBlurPass.frag.glsl")
 
+        blurShader = Shader("genericLightPass.vert.glsl", "ssaoBlurPass.frag.glsl")
+        blurShader.registerUniforms("ssaoInput")
+        blurShader.setUniform("ssaoInput", 0)
 
         noiseTexture = generateNoiseTexture()
     }
 
     public fun render(window: Window, camera: Camera, gBuffer: GBuffer, screenMesh: TextureMesh) {
 
-        GL11.glDisable(GL11.GL_BLEND)
+//        GL11.glDisable(GL11.GL_BLEND)
 
         ssaoFB.bind()
             window.clear()
@@ -58,7 +59,17 @@ public class SSAO {
 
         ssaoFB.unbind()
 
-        GL11.glEnable(GL11.GL_BLEND)
+        blurFB.bind()
+            window.clear()
+            blurShader.use()
+
+            ssaoFB.bindTexture(0, Framebuffer.Attachment.Color)
+
+            screenMesh.draw()
+
+        blurFB.unbind()
+
+//        GL11.glEnable(GL11.GL_BLEND)
     }
 
     private fun bindTextures(gBuffer: GBuffer) {
@@ -75,14 +86,14 @@ public class SSAO {
 
     private fun generateKernel() : Array<Vector3f> {
 
-        return Array(64, { i ->
+        return Array(128, { i ->
             val sample = Vector3f(
                     r.nextFloat() * 2f - 1f,
                     r.nextFloat() * 2f - 1f,
                     r.nextFloat()
             ).normalize()
             sample.mul(r.nextFloat())
-            var scale = i.toFloat() / 64f
+            var scale = i.toFloat() / 128f
             scale = lerp(0.1f, 1.0f, scale * scale)
             sample.mul(scale)
         })
@@ -97,7 +108,7 @@ public class SSAO {
                     r.nextFloat() * 2f - 1f,
                     r.nextFloat() * 2f - 1f,
                     0f
-            )
+            ) // NOTE: Normalize?
         })
         val noiseBuffer = BufferUtils.createFloatBuffer(16 * 3)
         ssaoNoise.forEach { v ->
@@ -130,6 +141,7 @@ public class SSAO {
         ssaoFB.destroy()
         blurFB.destroy()
         ssaoShader.destroy()
+        blurShader.destroy()
         GL11.glDeleteTextures(noiseTexture)
     }
 
