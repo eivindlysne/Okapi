@@ -35,11 +35,7 @@ public class Okapi {
     private val screenMesh: TextureMesh
     private val smallMesh: TextureMesh
     private val lightFramebuffer: Framebuffer
-//    private val gBuffer: GBuffer
 
-    // Shaders
-//    private val defaultShader: Shader
-//    private val geometryPassShader: Shader
     private val texturePassShader: Shader
     private val pointLightShader: Shader
     private val textShader: Shader
@@ -70,17 +66,9 @@ public class Okapi {
         ssaoPass = SSAO()
         lightingPass = Lighting()
 
-        //        gBuffer = GBuffer()
         screenMesh = createTextureMesh(-1f, -1f, 1f, 1f)
         smallMesh = createTextureMesh(1f - (1f / 2f), 1f - (1f / 2f), 1f, 1f)
         lightFramebuffer = Framebuffer(Framebuffer.Attachment.ColorAndDepth)
-
-//        geometryPassShader = Shader("geometryPass.vert.glsl", "geometryPass.frag.glsl")
-//        geometryPassShader.registerUniforms(
-//                "diffuse0",
-//                "viewProjection", "invProjection",
-//                "transform.position", "transform.orientation", "transform.scale")
-//        geometryPassShader.setUniform("diffuse0", 0)
 
         texturePassShader = Shader("texturePass.vert.glsl", "texturePass.frag.glsl")
         texturePassShader.registerUniforms("scaleFactor", "texture0")
